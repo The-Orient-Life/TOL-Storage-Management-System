@@ -16,7 +16,7 @@ import { HiOutlineSquare3Stack3D } from "react-icons/hi2";
 import { MdOutlineSettings } from "react-icons/md";
 import { LuMessageSquare } from "react-icons/lu";
 import { MdOutlineNotificationsNone } from "react-icons/md";
-
+import { useNavigate } from 'react-router-dom';
 
 
 function Navbar({ isSidebarOpen, setSidebarOpen }) {
@@ -25,6 +25,15 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
   const toggleDropdown = (index) => {
     setOpenDropdown(openDropdown === index ? null : index);
   };
+
+  const navigate = useNavigate();
+
+  const OnAddBtnClick = () => {
+     
+    console.log("Add Button Clicked")
+    navigate('/productadd')
+
+  }
 
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, link: "/" },
@@ -123,7 +132,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
             <button
               type="button"
               className="flex items-center gap-2 bg-blue-500 text-white font-medium rounded-full px-5 py-2 shadow-lg hover:bg-blue-600 transition"
-            >
+             onClick={OnAddBtnClick}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

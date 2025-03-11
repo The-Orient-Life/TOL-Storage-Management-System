@@ -9,6 +9,7 @@ import ProductReturn from "./components/ProductReturn"
 import PurchaseHistory from "./components/PurchaseHistory";
 import CustomerList from "./components/CustomerList";
 import ProductView from "./pages/ProductView";
+import AddProductForm from "./components/AddProductForm";
 
 function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(true); // Sidebar open by default
@@ -29,6 +30,7 @@ function App() {
           <Route exact path="/purchasehistory" element={<PurchaseHistory/>} />
           <Route exact path="/customerlist" element={<CustomerList/>} />
           <Route exact path="/productview" element={<ProductView/>} />
+          <Route exact path="/productadd" element={<AddProductForm/>} />
         </Routes>
       </div>
     </BrowserRouter>
