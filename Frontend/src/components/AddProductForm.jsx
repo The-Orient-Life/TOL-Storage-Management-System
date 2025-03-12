@@ -74,10 +74,7 @@ function AddProductForm() {
       productStockStatus: stockStatus.charAt(0).toUpperCase() + stockStatus.slice(1).replace("-", " ")
     };
   
-    
-    console.log(data);
-
-    const addURL = process.env.REACT_APP_BACKENDADD
+    const addURL = import.meta.env.VITE_APP_BACKENDADD
     axios.post(addURL, data)
       .then(response => {
         console.log("Yayyy"); 
