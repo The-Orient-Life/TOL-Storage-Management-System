@@ -1,8 +1,10 @@
-const express = require("express")
-const dotenv = require("dotenv")
-const cors = require("cors")
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
 
-const product = require("./controller/productController")
+const product = require("./controller/productController");
+const user = require("./controller/userController");
+
 
 const app = express();
 app.use(cors());
@@ -17,5 +19,6 @@ app.use(
 )
 
 app.use("/api", product);
+app.use("/api", user);
 
 module.exports = app;

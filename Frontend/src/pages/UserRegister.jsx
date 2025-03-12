@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { MapPin, Upload, UserPlus, X } from 'lucide-react';
 import { GoogleMapComponent } from '../components/GoogleMapComponent';
 import { GuarantorForm } from '../components/GuarantorForm';
+import axios from 'axios';
 
 function UserRegister() {
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
@@ -20,6 +21,17 @@ function UserRegister() {
   const onSubmit = (data) => {
     console.log(data);
     // Handle form submission
+    const regURL = import.meta.env.VITE_APP_BACKENDREG;
+
+    axios.post(regURL, data)
+    .then(response => {
+      console.log("YayyyREG"); 
+      console.log(response.data); 
+    })
+    .catch(error => {
+      console.error("This Is Post Error Form Frontend", error);  
+    });
+
   };
 
   const handleAddGuarantor = () => {
