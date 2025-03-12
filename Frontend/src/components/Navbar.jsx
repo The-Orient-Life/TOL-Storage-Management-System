@@ -59,7 +59,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       icon: <FaUser />,
       dropdown: [
         { name: "View Customer", link: "/customer" },
-        // { name: "Privacy", link: "/settings/privacy" },
+        { name: "New User", link: "/adduser" },
       ],
     },
     {
