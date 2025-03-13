@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, UserPlus, User, X, Package, CreditCard, AlertTriangle, RotateCcw, ChevronRight, Calendar, Clock, CheckCircle } from 'lucide-react';
-
+import axios from 'axios';
 
 function CustomerSearch() {
 
@@ -22,79 +22,108 @@ function CustomerSearch() {
     totalPenalty: 0
   });
 
-  // Simulated database - replace with actual API calls
+  // // Simulated database - replace with actual API calls
+  // const mockSearchUser = (nic) => {
+  //   // Simulate API call
+  //   if (nic === '123456789V') {
+
+  //     const apiUrl = `${import.meta.env.VITE_APP_BACKENDGET}?nic=${nicSearch}`;
+  //     axios.get(apiUrl)
+  //   .then(response => {
+  //     // Handle success - the user data will be in response.data
+  //     console.log("User found:", response.data);
+  //     // You can now display the user data in the UI
+  //   })
+
+  
+
+  //     return {
+  //       nic: '123456789V',
+  //       fullName: 'John Doe',
+  //       email: 'john@example.com',
+  //       phone: '+94 77 123 4567',
+  //       address: '123 Main St, Colombo',
+  //       totalPurchases: 5,
+  //       products: [
+  //         {
+  //           id: 'P1',
+  //           name: 'Samsung TV 55"',
+  //           purchaseDate: '2024-02-15',
+  //           price: 150000,
+  //           status: 'ongoing'
+  //         },
+  //         {
+  //           id: 'P2',
+  //           name: 'iPhone 15',
+  //           purchaseDate: '2024-01-10',
+  //           price: 250000,
+  //           status: 'completed'
+  //         }
+  //       ],
+  //       easyPayments: [
+  //         {
+  //           productId: 'P1',
+  //           productName: 'Samsung TV 55"',
+  //           totalMonths: 24,
+  //           paidMonths: 6,
+  //           monthlyAmount: 6250,
+  //           startDate: '2023-09-15',
+  //           penalty: 1000,
+  //           penaltyReason: 'Late payment for February 2024',
+  //           nextPaymentDate: '2024-03-15',
+  //           paymentHistory: [
+  //             {
+  //               date: '2024-02-20',
+  //               amount: 6250,
+  //               status: 'late',
+  //               penaltyAmount: 1000,
+  //               penaltyReason: 'Payment received 5 days late'
+  //             },
+  //             {
+  //               date: '2024-01-15',
+  //               amount: 6250,
+  //               status: 'on-time'
+  //             },
+  //             {
+  //               date: '2023-12-15',
+  //               amount: 6250,
+  //               status: 'on-time'
+  //             }
+  //           ]
+  //         }
+  //       ],
+  //       returnedProducts: [
+  //         {
+  //           id: 'R1',
+  //           productName: 'Laptop Asus',
+  //           returnDate: '2024-01-05',
+  //           reason: 'Display defect',
+  //           refundAmount: 125000
+  //         }
+  //       ],
+  //       totalPenalty: 1000
+  //     };
+  //   }
+  //   return null;
+  // };
+
   const mockSearchUser = (nic) => {
-    // Simulate API call
-    if (nic === '123456789V') {
-      return {
-        nic: '123456789V',
-        fullName: 'John Doe',
-        email: 'john@example.com',
-        phone: '+94 77 123 4567',
-        address: '123 Main St, Colombo',
-        totalPurchases: 5,
-        products: [
-          {
-            id: 'P1',
-            name: 'Samsung TV 55"',
-            purchaseDate: '2024-02-15',
-            price: 150000,
-            status: 'ongoing'
-          },
-          {
-            id: 'P2',
-            name: 'iPhone 15',
-            purchaseDate: '2024-01-10',
-            price: 250000,
-            status: 'completed'
-          }
-        ],
-        easyPayments: [
-          {
-            productId: 'P1',
-            productName: 'Samsung TV 55"',
-            totalMonths: 24,
-            paidMonths: 6,
-            monthlyAmount: 6250,
-            startDate: '2023-09-15',
-            penalty: 1000,
-            penaltyReason: 'Late payment for February 2024',
-            nextPaymentDate: '2024-03-15',
-            paymentHistory: [
-              {
-                date: '2024-02-20',
-                amount: 6250,
-                status: 'late',
-                penaltyAmount: 1000,
-                penaltyReason: 'Payment received 5 days late'
-              },
-              {
-                date: '2024-01-15',
-                amount: 6250,
-                status: 'on-time'
-              },
-              {
-                date: '2023-12-15',
-                amount: 6250,
-                status: 'on-time'
-              }
-            ]
-          }
-        ],
-        returnedProducts: [
-          {
-            id: 'R1',
-            productName: 'Laptop Asus',
-            returnDate: '2024-01-05',
-            reason: 'Display defect',
-            refundAmount: 125000
-          }
-        ],
-        totalPenalty: 1000
-      };
-    }
-    return null;
+    // Construct the full API URL by appending the NIC number
+    const apiUrl = `${import.meta.env.VITE_APP_BACKENDGET}${nic}`;
+    
+    axios.get(apiUrl)
+      .then(response => {
+        // Handle success - the real user data will be in response.data
+        console.log("User found:", response.data);
+        // You can now display the user data in the UI or process it further
+      })
+      .catch(error => {
+        // Handle error - in case of failure during the API call
+        console.error("Error fetching user data:", error);
+      });
   };
+  
+  
 
   const handleSearch = () => {
     const result = mockSearchUser(nicSearch);
