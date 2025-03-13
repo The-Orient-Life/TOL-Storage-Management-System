@@ -6,11 +6,13 @@ const productSchema = new mongoose.Schema({
     productVariants: [
         {
             name: { type: String, required: true },  
-            stock: { type: Number, required: true }  
+            stock: { type: Number, required: true },
+            price: { type: String, required: true }  // Include price for each variant
         }
     ], 
     productTotalWorth: { type: Number, required: true },
     productStockStatus: { type: String, required: true },
+    imagePreview: { type: String },  // Add imagePreview to store base64 encoded image
 }, { timestamps: true });
 
 const Product = mongoose.model("Product", productSchema);
