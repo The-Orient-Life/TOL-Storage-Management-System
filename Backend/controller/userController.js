@@ -113,24 +113,6 @@ router.get("/getmanager", async (req, res) => {
 });
 
 // GET all users with the role "Manager"
-router.get("/getmanager", async (req, res) => {
-  try {
-
-    const users = await User.find({ role: "Manager" });
-
-    if (!users || users.length === 0) {
-      return res.status(404).json({ message: "No users found with the role 'Manager'" });
-    }
-
-
-    return res.status(200).json(users);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error" });
-  }
-});
-
-// GET all users with the role "Manager"
 router.get("/getexecutive", async (req, res) => {
   try {
 

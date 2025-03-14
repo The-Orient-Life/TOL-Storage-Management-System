@@ -22,38 +22,34 @@ router.get('/getProduct', async (req, res) => {
 
 });
 
-// Example for another route
 router.post('/addProduct', async (req, res) => {
     
-    const { productName, productCategory, productVariants, productTotalWorth, productStockStatus } = req.body;
+    const { productName, productCategory, productVariants, productTotalWorth, productStockStatus, imagePreview } = req.body;
 
-    
-    if (!Array.isArray(productVariants) || productVariants.some(v => !v.name || v.stock === undefined)) {
-        return res.status(400).json({ message: 'Each variant must have a name and stock quantity.' });
+    // Validation for variants (checking if name, stock, and price are provided)
+    if (!Array.isArray(productVariants) || productVariants.some(v => !v.name || v.stock === undefined || v.price === undefined)) {
+        return res.status(400).json({ message: 'Each variant must have a name, stock quantity, and price.' });
     }
 
-    
     const newProduct = new Product({
         productName,
         productCategory, 
         productVariants,  
         productTotalWorth,
         productStockStatus,
+        imagePreview  // Include image preview
     });
 
     try {
-        
         const saveProduct = await newProduct.save();
-
-
         res.status(201).json({ message: "Product Saved Successfully", product: saveProduct });
         console.log("Product Saved Successfully Completed!");
     } catch (error) {
-        
         res.status(500).json({ message: "Error Adding Product", error: error.message });
         console.log("Product Saved Unsuccessfully!");
     }
 });
+
 
 
 
