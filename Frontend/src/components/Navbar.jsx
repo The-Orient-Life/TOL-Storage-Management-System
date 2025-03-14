@@ -58,8 +58,9 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       name: "Customer",
       icon: <FaUser />,
       dropdown: [
-        { name: "View Customer", link: "/customer" },
+        { name: "Search Customer", link: "/customer" },
         { name: "New User", link: "/adduser" },
+        { name: "Customer List", link: "/adduser" }
       ],
     },
     {
@@ -86,14 +87,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
         { name: "Demo Two", link: "/settings/privacy" },
       ],
     },
-    {
-      name: "Setting",
-      icon: <MdOutlineSettings />,
-      // dropdown: [
-      //   { name: "Account", link: "/settings/account" },
-      //   { name: "Privacy", link: "/settings/privacy" },
-      // ],
-    },
+    
   ];
 
   return (
