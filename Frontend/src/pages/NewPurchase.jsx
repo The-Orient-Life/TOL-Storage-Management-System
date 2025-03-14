@@ -10,6 +10,7 @@ function NewPurchase() {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [paymentType, setPaymentType] = useState('Full Payment');
     const [months, setMonths] = useState(3);
+    
   
     const handleProductSelect = (product) => {
       const existingProduct = selectedProducts.find(p => p.id === product.id);
