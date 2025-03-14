@@ -60,7 +60,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       dropdown: [
         { name: "Search Customer", link: "/customer" },
         { name: "New User", link: "/adduser" },
-        { name: "Customer List", link: "/adduser" }
+        { name: "Customer List", link: "/customerlist" }
       ],
     },
     {
@@ -69,14 +69,6 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       dropdown: [
         { name: "New Purchase", link: "/newpurchase" },
         { name: "Purchase History", link: "/purchasehistory" },
-      ],
-    },
-    {
-      name: "Spicial",
-      icon: <FaSurprise />,
-      dropdown: [
-        { name: "Customer List V2 Head Admin", link: "/customerlist" },
-       // { name: "Privacy", link: "/settings/privacy" },
       ],
     },
     {
