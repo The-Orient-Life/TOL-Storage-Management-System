@@ -18,7 +18,8 @@ router.post('/register', async (req, res) => {
     branch,
     guarantors,
     photo,
-    role
+    role,
+    password
   } = req.body;
 
   try {
@@ -29,6 +30,12 @@ router.post('/register', async (req, res) => {
     // if (!role || role.trim() === '') {
     //   role = 'Customer';  // Set to 'Customer' if the role is empty
     // }
+
+    // Check if the role is Executive or Manager, and if password is provided
+    if ((role === 'Executive' || role === 'Manager') && !password) {
+      return res.status(400).json({ message: 'Password is required for Executive or Manager roles' });
+    }
+
 
     // Create a new User document
     const newUser = new User({
@@ -42,6 +49,7 @@ router.post('/register', async (req, res) => {
       guarantors: guarantors || [], // Optional field: If no guarantors, set to an empty array
       photo: photo || [],           // Optional field: If no photos, set to an empty array
       role,
+      password
     });
 
     await newUser.save();

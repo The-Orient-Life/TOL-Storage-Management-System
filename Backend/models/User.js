@@ -45,6 +45,10 @@ const userSchema = new Schema({
       type: String,
       required: true
     },
+    password: {
+      type: String,
+      required: false
+    },
     phoneNumber1: {
       type: String,
       required: true
@@ -70,8 +74,17 @@ const userSchema = new Schema({
   // Role can be 'User' or 'Guarantor'
   role: {
     type: String,
-    enum: ['Customer', 'Executive', 'Manager'],
+    enum: ['Customer', 'Executive', 'Branch Manager'],
     required: true
+  },
+  // Password field with a custom validation based on the role
+  password: {
+    type: String,
+    required: function() {
+      return this.role === 'Executive' || this.role === 'Manager';
+    },
+    minlength: 6,  // Optional: enforce a minimum password length
+    select: false   // Optional: don't include the password in queries by default
   }
 }, { timestamps: true });  // This enables timestamps: createdAt and updatedAt
 
