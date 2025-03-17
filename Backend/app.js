@@ -4,7 +4,7 @@ const cors = require("cors");
 
 const product = require("./controller/productController");
 const user = require("./controller/userController");
-
+const transaction = require("./controller/transactionController");
 
 const app = express();
 app.use(cors());
@@ -20,5 +20,6 @@ app.use(
 
 app.use("/api", product);
 app.use("/api", user);
+app.use("/api", transaction);
 
 module.exports = app;
