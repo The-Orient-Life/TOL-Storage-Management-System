@@ -11,6 +11,7 @@ function UserRegister() {
   
   const isGuarantor = watch('isGuarantor');
   const guarantors = watch('guarantors') || [];
+  const selectedRole = watch('role');
 
   const handleImageChange = (e) => {
     if (e.target.files?.[0]) {
@@ -31,7 +32,6 @@ function UserRegister() {
     .catch(error => {
       console.error("This Is Post Error Form Frontend", error);  
     });
-
   };
 
   const handleAddGuarantor = () => {
@@ -44,6 +44,8 @@ function UserRegister() {
     const newGuarantors = guarantors.filter((_, i) => i !== index);
     setValue('guarantors', newGuarantors);
   };
+
+  const showPasswordField = selectedRole === 'Executive' || selectedRole === 'Branch Manager';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -150,11 +152,30 @@ function UserRegister() {
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 >
                   <option value="">Select a role</option>
-                  <option value="Customer">Executive</option>
-                  <option value="Executive">Branch Manager</option>
+                  <option value="Executive">Executive</option>
+                  <option value="Branch Manager">Branch Manager</option>
                 </select>
                 {errors.role && <span className="text-red-500 text-xs">{errors.role.message}</span>}
               </div>
+
+              {showPasswordField && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Password</label>
+                  <input
+                    type="password"
+                    {...register('password', { 
+                      required: 'Password is required for Executive and Branch Manager roles',
+                      minLength: {
+                        value: 8,
+                        message: 'Password must be at least 8 characters long'
+                      }
+                    })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                    placeholder="Enter your password"
+                  />
+                  {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
+                </div>
+              )}
 
               <div className="flex items-center h-full">
                 <label className="flex items-center space-x-3 cursor-pointer group">
