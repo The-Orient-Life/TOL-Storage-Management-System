@@ -43,6 +43,24 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Password is required for Executive or Manager roles' });
     }
 
+    if (!email || typeof email !== "string") {
+      return res.json({ status: "error", error: "Email empty or invalid" });
+    }
+  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.json({ status: "error", error: "Invalid email format" });
+    }
+  
+      // Password validation using regex
+      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+      if (!passwordRegex.test(password)) {
+        return res.json({
+          status: "error",
+          error: "Invalid password format"
+        });
+      }
+
     const hashPassword = await bcrypt.hash(password, 12)
 
     // Create a new User document
