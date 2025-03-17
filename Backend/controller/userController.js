@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 
 const User = require("../models/User.js")
 
@@ -31,14 +32,21 @@ router.post('/register', async (req, res) => {
     //   role = 'Customer';  // Set to 'Customer' if the role is empty
     // }
 
+     // Check if email or username already exists
+     const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
+     if (existingUser) {
+       return res.json({ status: "error", error: "Email or username already registered" });
+     }
+
     // Check if the role is Executive or Manager, and if password is provided
     if ((role === 'Executive' || role === 'Manager') && !password) {
       return res.status(400).json({ message: 'Password is required for Executive or Manager roles' });
     }
 
+    const hashPassword = await bcrypt.hash(password, 12)
 
     // Create a new User document
-    const newUser = new User({
+    const newUser = await new User({
       userName,
       nicNumber,
       email,
@@ -49,7 +57,7 @@ router.post('/register', async (req, res) => {
       guarantors: guarantors || [], // Optional field: If no guarantors, set to an empty array
       photo: photo || [],           // Optional field: If no photos, set to an empty array
       role,
-      password
+      password: hashPassword
     });
 
     await newUser.save();
