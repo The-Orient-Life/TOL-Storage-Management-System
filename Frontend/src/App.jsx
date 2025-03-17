@@ -11,6 +11,7 @@ import CustomerList from "./components/CustomerList";
 import ProductView from "./pages/ProductView";
 import AddProductForm from "./components/AddProductForm";
 import UserRegister from "./pages/UserRegister";
+import LoginPage from "./pages/LoginPage"
 
 function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(true); // Sidebar open by default
@@ -24,7 +25,7 @@ function App() {
         }`}
       >
         <Routes>
-          <Route exact path="/" element={<Home />} />
+          <Route exact path="/home" element={<Home />} />
           <Route exact path="/customer" element={<Customer/>} />
           <Route exact path="/newpurchase" element={<NewPurchase/>} />
           <Route exact path="/productreturn" element={<ProductReturn/>} />
@@ -33,6 +34,7 @@ function App() {
           <Route exact path="/productview" element={<ProductView/>} />
           <Route exact path="/productadd" element={<AddProductForm/>} />
           <Route exact path="/adduser" element={<UserRegister/>} />
+          <Route exact path="/" element={<LoginPage/>} />
         </Routes>
       </div>
     </BrowserRouter>

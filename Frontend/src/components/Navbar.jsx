@@ -36,7 +36,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
   }
 
   const menuItems = [
-    { name: "Dashboard", icon: <FaHome />, link: "/" },
+    { name: "Dashboard", icon: <FaHome />, link: "/dashboard" },
     // { name: "Profile", icon: <FaUser />, link: "/profile" },
     // {
     //   name: "Datastore",
