@@ -75,8 +75,8 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       name: "Reports",
       icon: <HiOutlineSquare3Stack3D />,
       dropdown: [
-        { name: "Demo One", link: "/settings/account" },
-        { name: "Demo Two", link: "/settings/privacy" },
+        { name: "Weekly Sales", link: "/settings/account" },
+        { name: "Monthly Sales", link: "/settings/privacy" },
       ],
     },
     
@@ -135,30 +135,6 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
               </svg>
               Add Product
             </button>
-            <div className="flex items-center space-x-4">
-              <button
-                type="button"
-                className="focus:outline-none rounded-full shadow-lg"
-              >
-                <img
-                  className="w-10 h-10 rounded-full border-2 border-gray-300"
-                  src="https://randomuser.me/api/portraits/women/44.jpg"
-                  alt="User Profile"
-                />
-              </button>
-              <button
-                type="button"
-                className="focus:outline-none bg-indigo-50 rounded-full p-2 shadow-lg"
-              >
-                <MdOutlineNotificationsNone className="w-6 h-6" />
-              </button>
-              <button
-                type="button"
-                className="focus:outline-none bg-indigo-50 rounded-full p-2 shadow-lg"
-              >
-                <LuMessageSquare className="w-5 h-6" />
-              </button>
-            </div>
           </div>
         </div>
       </nav>
