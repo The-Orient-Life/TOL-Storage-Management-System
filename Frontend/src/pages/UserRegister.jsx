@@ -4,6 +4,7 @@ import { MapPin, Upload, UserPlus, X } from 'lucide-react';
 import { GoogleMapComponent } from '../components/GoogleMapComponent';
 import { GuarantorForm } from '../components/GuarantorForm';
 import axios from 'axios';
+import Swal from "sweetalert2";
 
 function UserRegister() {
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
@@ -27,7 +28,15 @@ function UserRegister() {
     axios.post(regURL, data)
     .then(response => {
       console.log("YayyyREG"); 
-      console.log(response.data); 
+      console.log(response.data);
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Login Successful",
+        showConfirmButton: false,
+        iconColor: "#4BB543",
+        timer: 2000,
+      }); 
     })
     .catch(error => {
       console.error("This Is Post Error Form Frontend", error);  
