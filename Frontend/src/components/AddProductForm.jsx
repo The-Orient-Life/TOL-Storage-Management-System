@@ -8,7 +8,7 @@ import {
   Plus,
 } from "lucide-react";
 
-function App() {
+function AddProduct() {
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
   const [variants, setVariants] = useState([{ name: "", stock: 0, price: "" }]);
@@ -359,4 +359,4 @@ function App() {
   );
 }
 
-export default App;
+export default AddProduct;
