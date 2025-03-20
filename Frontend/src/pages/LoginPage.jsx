@@ -1,11 +1,53 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, User } from 'lucide-react';
+import axios from 'axios';
+import Swal from "sweetalert2";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import Logo from "../assets/LOGO.jpg"
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Initialize the navigate function
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent form from submitting the default way
+  
+    // Get the backend URL from the environment variable
+    const regURL = import.meta.env.VITE_APP_BACKENDLOG;
+  
+    // Check if the URL is correct
+    console.log("Backend URL:", regURL);  // Log the backend URL to verify it's correct
+  
+    if (!regURL) {
+      console.error("Backend URL is missing! Please check your .env file.");
+      Swal.fire("Error", "Backend URL is not defined", "error");
+      return;
+    }
+  
+    try {
+      const response = await axios.post(regURL, {
+        username: userName,
+        password: password,
+      });
+  
+      if (response.data.status === "ok") {
+        const token = response.data.token;
+        sessionStorage.setItem("authToken", token);
+        Swal.fire("Success", "You have logged in successfully", "success");
+        navigate("/dashboard");
+      } else {
+        Swal.fire("Error", response.data.error, "error");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      Swal.fire("Error", "An error occurred during login", "error");
+    }
+  };
+  
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
@@ -14,7 +56,7 @@ function Login() {
         <div className="flex justify-center mb-8">
           <div className="rounded-full border-4 border-blue-600 p-1 shadow-lg">
             <img 
-              src="https://i.ibb.co/Qp1SXBk/tol-logo.jpg" 
+              src={Logo} 
               alt="The Orient Life Logo" 
               className="h-24 w-24 rounded-full object-cover"
             />
@@ -27,7 +69,7 @@ function Login() {
         </h2>
 
         {/* Form */}
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
