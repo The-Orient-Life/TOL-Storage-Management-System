@@ -4,6 +4,8 @@ import { Eye, EyeOff, Lock, User } from 'lucide-react';
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
@@ -35,6 +37,7 @@ function Login() {
                 type="text"
                 placeholder="Username"
                 value={userName}
+                onChange={(e) => setUserName(e.target.value)}
                 className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
               />
             </div>
@@ -48,6 +51,7 @@ function Login() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
                 />
                 <button
