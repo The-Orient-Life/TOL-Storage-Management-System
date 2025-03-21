@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+// const isAuthenticated = require("../middleware/auth.js");
 
 const User = require("../models/User.js")
 
@@ -212,6 +213,48 @@ router.post("/login", async (req, res) => {
     // Catch any unexpected errors
     console.error("Error during login:", error);
     return res.status(500).json({ status: "error", error: "Internal server error" });
+  }
+});
+
+// get user API endpoint
+// router.get("/getUsers", isAuthenticated, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.id).select("-password");
+
+//     // If user is not found, return an error
+//     if (!user) {
+//       return res.status(404).json({ status: "error", error: "User not found." });
+//     }
+
+//     res.json(user); // Return the user details
+//   } catch (err) {
+//     console.error("Error in getUser route:", err); // Log error for debugging
+//     res.status(500).json({ status: "error", error: "Server error" });
+//   }
+// });
+
+// get user API endpoint
+router.get("/getUserDetails", async (req, res) => {
+  try {
+    // Get the userId from query parameters (you can use req.query or req.body depending on the frontend implementation)
+    const { userId } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({ status: "error", error: "User ID is required." });
+    }
+
+    // Find the user by the provided userId
+    const user = await User.findById(userId).select("-password");
+
+    // If user is not found, return an error
+    if (!user) {
+      return res.status(404).json({ status: "error", error: "User not found." });
+    }
+
+    res.json(user); // Return the user details
+  } catch (err) {
+    console.error("Error in getUser route:", err); // Log error for debugging
+    res.status(500).json({ status: "error", error: "Server error" });
   }
 });
 

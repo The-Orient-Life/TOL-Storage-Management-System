@@ -4,6 +4,7 @@ import axios from 'axios';
 import Swal from "sweetalert2";
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Logo from "../assets/LOGO.jpg"
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -45,9 +46,47 @@ function Login() {
       console.error("Login failed:", error);
       Swal.fire("Error", "An error occurred during login", "error");
     }
+    const token = sessionStorage.getItem("authToken");
+    const decoded = jwtDecode(token);
+
+    console.log(decoded);
+    const userId = decoded.id;  // Get the 'id' from the decoded token
+
+    const userDetailsResponse = await axios.get(
+      `${import.meta.env.VITE_APP_BACKENDUSER}${userId}`
+    );
+
+    if (userDetailsResponse.data) {
+      console.log('User details:', userDetailsResponse.data);
+      // Handle user details response (e.g., show user info or store it)
+      sessionStorage.setItem("UserDetails",JSON.stringify(userDetailsResponse));
+    } else {
+      Swal.fire("Error", "Failed to fetch user details", "error");
+    }
+
+    console.log(decoded);
+   
   };
   
-  
+  async () => {
+    const token = sessionStorage.getItem("authToken");
+    const decoded = jwtDecode(token);
+
+    const userId = decoded.id;  // Get the 'id' from the decoded token
+
+    const userDetailsResponse = await axios.get(
+      `${import.meta.env.VITE_APP_BACKENDUSER}${userId}`
+    );
+
+    if (userDetailsResponse.data) {
+      console.log('User details:', userDetailsResponse.data);
+      // Handle user details response (e.g., show user info or store it)
+    } else {
+      Swal.fire("Error", "Failed to fetch user details", "error");
+    }
+
+    console.log(decoded);
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
