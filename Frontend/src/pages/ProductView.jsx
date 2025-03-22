@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect  } from 'react';
 import Swal from "sweetalert2";
 import { 
     Smartphone, 
@@ -21,6 +21,7 @@ import {
     Filter
   } from 'lucide-react';
   
+import axios from 'axios';
   
 function ProductView() {
   
@@ -32,174 +33,228 @@ function ProductView() {
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 2000]);
 
-  const products = [
-    // Samsung Phones
-    {
-      id: 1,
-      name: "Samsung",
-      category: "Smartphones",
-      stock: 11,
-      price: 1199,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["Galaxy S25", "Galaxy S24+", "Galaxy A54"],
-    },
-    {
-      id: 2,
-      name: "Samsung Galaxy S24+",
-      category: "Smartphones",
-      stock: 20,
-      price: 999,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["50MP Camera", '6.7" Display', "Snapdragon 8 Gen 3"],
-    },
-    {
-      id: 3,
-      name: "Samsung Galaxy A54",
-      category: "Smartphones",
-      stock: 30,
-      price: 449,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["50MP Camera", '6.4" AMOLED', "5G", "IP67"],
-    },
-    {
-      id: 4,
-      name: "Samsung Galaxy A34",
-      category: "Smartphones",
-      stock: 15,
-      price: 399,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["48MP Camera", '6.6" AMOLED', "5G"],
-    },
+  // const products = [
+  //   // Samsung Phones
+  //   {
+  //     id: 1,
+  //     name: "Samsung",
+  //     category: "Smartphones",
+  //     stock: 11,
+  //     price: 1199,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["Galaxy S25", "Galaxy S24+", "Galaxy A54"],
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Samsung Galaxy S24+",
+  //     category: "Smartphones",
+  //     stock: 20,
+  //     price: 999,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["50MP Camera", '6.7" Display', "Snapdragon 8 Gen 3"],
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Samsung Galaxy A54",
+  //     category: "Smartphones",
+  //     stock: 30,
+  //     price: 449,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["50MP Camera", '6.4" AMOLED', "5G", "IP67"],
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Samsung Galaxy A34",
+  //     category: "Smartphones",
+  //     stock: 15,
+  //     price: 399,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["48MP Camera", '6.6" AMOLED', "5G"],
+  //   },
 
-    // Vivo Phones
-    {
-      id: 5,
-      name: "Vivo X100 Pro",
-      category: "Smartphones",
-      stock: 8,
-      price: 899,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "Low Stock",
-      features: ["50MP Camera", "Zeiss Optics", "Dimensity 9300", "5G"],
-    },
-    {
-      id: 6,
-      name: "Vivo V29",
-      category: "Smartphones",
-      stock: 12,
-      price: 499,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["50MP Camera", "Aura Light", "5G"],
-    },
-    {
-      id: 7,
-      name: "Vivo Y36",
-      category: "Smartphones",
-      stock: 25,
-      price: 299,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["50MP Camera", "5000mAh Battery", "44W Charging"],
-    },
+  //   // Vivo Phones
+  //   {
+  //     id: 5,
+  //     name: "Vivo X100 Pro",
+  //     category: "Smartphones",
+  //     stock: 8,
+  //     price: 899,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "Low Stock",
+  //     features: ["50MP Camera", "Zeiss Optics", "Dimensity 9300", "5G"],
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "Vivo V29",
+  //     category: "Smartphones",
+  //     stock: 12,
+  //     price: 499,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["50MP Camera", "Aura Light", "5G"],
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "Vivo Y36",
+  //     category: "Smartphones",
+  //     stock: 25,
+  //     price: 299,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["50MP Camera", "5000mAh Battery", "44W Charging"],
+  //   },
 
-    // iPhone Models
-    {
-      id: 8,
-      name: "iPhone 15 Pro Max",
-      category: "Smartphones",
-      stock: 15,
-      price: 1199,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["48MP Camera", "A17 Pro", "Titanium Frame", "5G"],
-    },
-    {
-      id: 9,
-      name: "iPhone 15",
-      category: "Smartphones",
-      stock: 20,
-      price: 799,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["48MP Camera", "A16 Bionic", "USB-C", "5G"],
-    },
+  //   // iPhone Models
+  //   {
+  //     id: 8,
+  //     name: "iPhone 15 Pro Max",
+  //     category: "Smartphones",
+  //     stock: 15,
+  //     price: 1199,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["48MP Camera", "A17 Pro", "Titanium Frame", "5G"],
+  //   },
+  //   {
+  //     id: 9,
+  //     name: "iPhone 15",
+  //     category: "Smartphones",
+  //     stock: 20,
+  //     price: 799,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["48MP Camera", "A16 Bionic", "USB-C", "5G"],
+  //   },
 
-    // Google Phones
-    {
-      id: 10,
-      name: "Google Pixel 8 Pro",
-      category: "Smartphones",
-      stock: 12,
-      price: 999,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["50MP Camera", "Tensor G3", "AI Features", "5G"],
-    },
-    {
-      id: 11,
-      name: "Google Pixel 8",
-      category: "Smartphones",
-      stock: 18,
-      price: 699,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["50MP Camera", "Tensor G3", "5G"],
-    },
+  //   // Google Phones
+  //   {
+  //     id: 10,
+  //     name: "Google Pixel 8 Pro",
+  //     category: "Smartphones",
+  //     stock: 12,
+  //     price: 999,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["50MP Camera", "Tensor G3", "AI Features", "5G"],
+  //   },
+  //   {
+  //     id: 11,
+  //     name: "Google Pixel 8",
+  //     category: "Smartphones",
+  //     stock: 18,
+  //     price: 699,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["50MP Camera", "Tensor G3", "5G"],
+  //   },
 
-    // OnePlus Phones
-    {
-      id: 12,
-      name: "OnePlus 12",
-      category: "Smartphones",
-      stock: 0,
-      price: 899,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "Out of Stock",
-      features: ["50MP Camera", "Snapdragon 8 Gen 3", "100W Charging", "5G"],
-    },
-    {
-      id: 13,
-      name: "OnePlus Nord CE 3",
-      category: "Smartphones",
-      stock: 22,
-      price: 399,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["64MP Camera", "5G", "Fast Charging"],
-    },
+  //   // OnePlus Phones
+  //   {
+  //     id: 12,
+  //     name: "OnePlus 12",
+  //     category: "Smartphones",
+  //     stock: 0,
+  //     price: 899,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "Out of Stock",
+  //     features: ["50MP Camera", "Snapdragon 8 Gen 3", "100W Charging", "5G"],
+  //   },
+  //   {
+  //     id: 13,
+  //     name: "OnePlus Nord CE 3",
+  //     category: "Smartphones",
+  //     stock: 22,
+  //     price: 399,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["64MP Camera", "5G", "Fast Charging"],
+  //   },
 
-    // Xiaomi Phones
-    {
-      id: 14,
-      name: "Xiaomi 14 Pro",
-      category: "Smartphones",
-      stock: 10,
-      price: 999,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "Low Stock",
-      features: [
-        "50MP Leica Camera",
-        "Snapdragon 8 Gen 3",
-        "120W Charging",
-        "5G",
-      ],
-    },
-    {
-      id: 15,
-      name: "Xiaomi Redmi Note 13 Pro",
-      category: "Smartphones",
-      stock: 28,
-      price: 349,
-      icon: <Smartphone className="w-6 h-6" />,
-      status: "In Stock",
-      features: ["200MP Camera", "67W Charging", "5G"],
-    },
-  ];
+  //   // Xiaomi Phones
+  //   {
+  //     id: 14,
+  //     name: "Xiaomi 14 Pro",
+  //     category: "Smartphones",
+  //     stock: 10,
+  //     price: 999,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "Low Stock",
+  //     features: [
+  //       "50MP Leica Camera",
+  //       "Snapdragon 8 Gen 3",
+  //       "120W Charging",
+  //       "5G",
+  //     ],
+  //   },
+  //   {
+  //     id: 15,
+  //     name: "Xiaomi Redmi Note 13 Pro",
+  //     category: "Smartphones",
+  //     stock: 28,
+  //     price: 349,
+  //     icon: <Smartphone className="w-6 h-6" />,
+  //     status: "In Stock",
+  //     features: ["200MP Camera", "67W Charging", "5G"],
+  //   },
+  // ];
+
+ 
+
+  const [product, setProduct] = useState([]); // Initialize state to hold an array of products
+  const products =product
+
+  useEffect(() => {
+    // Fetch product data
+    const fetchData = async () => {
+      
+      const apiUrl = import.meta.env.VITE_APP_BACKENDPRODUCT;
+
+      try {
+        const response = await axios.get(apiUrl);
+        
+        // Log full response to check its structure
+        console.log(response.data);
+
+        const backendData = response.data.getProduct; // Array of products
+
+        // Transform the backend data into the desired format
+        const transformedData = backendData.map((product, index) => {
+          const productVariants = Array.isArray(product.productVariants) ? product.productVariants : [];
+
+          return {
+            id: product._id || index + 1, // Use the _id or fall back to index as id
+            name: product.productName || 'N/A',
+            category: product.productCategory || 'N/A', 
+            stock: productVariants.length > 0
+              ? productVariants.reduce((acc, variant) => acc + (variant.stock || 0), 0)
+              : product.productStock || 0, // Handle stock if variants are empty
+            price: productVariants.length > 0
+              ? productVariants[0].price
+              : product.productTotalWorth || 0, // Handle price fallback
+            icon: <Smartphone className="w-6 h-6" />, // You can conditionally change this based on category
+            status: product.productStockStatus || 'Unknown',
+            features: productVariants.map(variant => variant.name) || [], // Assuming productVariants have features
+          };
+        });
+
+        // Update the product state with the transformed data
+        setProduct(transformedData);
+        console.log("Transformed Product data:", transformedData);
+        
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures it only runs once when the component mounts
+
+  
 
   const getStatusColor = (status) => {
     switch (status) {
