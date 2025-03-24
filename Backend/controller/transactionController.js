@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const Transaction = require("../models/Transaction.js")
+const User = require("../models/User.js");
+const Product = require("../models/Product.js");
 
 router.post('/savetransaction', async (req, res) => {
     try {
