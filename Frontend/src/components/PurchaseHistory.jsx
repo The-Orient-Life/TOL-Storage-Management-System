@@ -8,6 +8,9 @@ const PurchaseHistory = () => {
     {
       id: 1,
       customer: 'John Doe',
+      cNic: 20012345678,
+      eNic: 20012345678,
+      eCommission: "Rs.2000",
       product: 'Xiaomi Note 9',
       date: '2024-02-20',
       amount: 999,
@@ -17,6 +20,9 @@ const PurchaseHistory = () => {
     {
       id: 2,
       customer: 'Jane Smith',
+      cNic: 20012345678,
+      eNic: 20012345678,
+      eCommission: "Rs.2000",
       product: 'Innovex TV',
       date: '2024-02-18',
       amount: 1500,
@@ -67,6 +73,9 @@ const PurchaseHistory = () => {
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer NIC</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Executive NIC</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Executive Commission</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
@@ -83,6 +92,9 @@ const PurchaseHistory = () => {
                       onClick={() => setSelectedPurchase(purchase.id)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">{purchase.customer}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{purchase.cNic}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{purchase.eNic}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{purchase.eCommission}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{purchase.product}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{purchase.date}</td>
                       <td className="px-6 py-4 whitespace-nowrap">${purchase.amount}</td>
