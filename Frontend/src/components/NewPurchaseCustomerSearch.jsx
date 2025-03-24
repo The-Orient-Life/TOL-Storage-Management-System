@@ -26,6 +26,8 @@ function NewPurchaseCustomerSearch({ onCustomerSelect }) {
         guarantors: response.data.guarantors,
       };
 
+      sessionStorage.setItem("Customer NIC",response.data.nicNumber);
+
       // console.log("Mapped User Data:", userData);
       return foundCustomer;
     } catch (error) {

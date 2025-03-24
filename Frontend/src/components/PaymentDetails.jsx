@@ -1,7 +1,5 @@
 import React from 'react';
 import { CreditCard, Calendar, ShoppingCart, Trash2 } from 'lucide-react';
-import axios from "axios";
-
 
 export default function PaymentDetails({
     selectedProducts,
@@ -12,8 +10,25 @@ export default function PaymentDetails({
     paymentType,
     months
   }) {
-    const monthlyPayment = paymentType === 'Easy Payment' ? subtotal / months : 0;
-  
+    // Ensure subtotal is a valid number before using toFixed
+    const validSubtotal = typeof subtotal === 'number' && !isNaN(subtotal) ? subtotal : 0;
+    const monthlyPayment = paymentType === 'Easy Payment' ? validSubtotal / months : 0;
+
+    const handleCompletePurchase = () => {
+      // Log product details
+      console.log('Selected Products:', selectedProducts);
+
+      // Log payment details
+      console.log('Subtotal:', validSubtotal.toFixed(2));
+      if (paymentType === 'Easy Payment') {
+        console.log('Monthly Payment:', monthlyPayment.toFixed(2));
+        console.log('Payment Type:', paymentType);
+        console.log('Months:', months);
+      } else {
+        console.log('Payment Type:', paymentType);
+      }
+    };
+
     return (
       <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
         <div className="flex items-center gap-2 mb-6">
@@ -94,7 +109,7 @@ export default function PaymentDetails({
               <div className="space-y-2 pt-4 border-t">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal:</span>
-                  <span className="font-medium">${subtotal.toFixed(2)}</span>
+                  <span className="font-medium">${validSubtotal.toFixed(2)}</span>
                 </div>
                 
                 {paymentType === 'Easy Payment' && (
@@ -106,11 +121,13 @@ export default function PaymentDetails({
                 
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
                   <span>Total:</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>${validSubtotal.toFixed(2)}</span>
                 </div>
               </div>
   
-              <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+              <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+               onClick={handleCompletePurchase}
+              >
                 <CreditCard size={20} />
                 Complete Purchase
               </button>
@@ -124,4 +141,4 @@ export default function PaymentDetails({
         )}
       </div>
     );
-  }
+}

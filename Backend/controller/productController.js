@@ -68,4 +68,83 @@ router.delete('/deleteProduct/:productID', async (req, res) => {
     }
 });
 
+// Define routes in productController
+router.get('/getModels', async (req, res) => {
+    try {
+        // Fetch products from the database
+        const products = await Product.find();
+
+        // Extract only the relevant data from each product
+        const formattedProducts = products.map(product => ({
+            productName: product.productName,  // Including product name if needed
+            productCategory: product.productCategory,
+            productStockStatus: product.productStockStatus,
+            imagePreview: product.imagePreview,
+            productVariants: product.productVariants.map(variant => ({
+                name: variant.name,
+                stock: variant.stock,
+                price: variant.price,
+                _id: variant._id
+            }))
+        }));
+
+        // Send the response with the formatted data
+        res.status(200).json({
+            message: "Product Fetched Successfully",
+            products: formattedProducts
+        });
+        console.log("Product Fetched Successfully Completed!");
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Error Fetching Product",
+            error: error.message
+        });
+        console.log("Product Fetched Unsuccessfully!");
+    }
+});
+
+router.get('/getM', async (req, res) => {
+    try {
+        // Fetch products from the database
+        const products = await Product.find();
+
+        // Create an array to store the formatted variants
+        let formattedVariants = [];
+
+        // Loop through each product
+        products.forEach(product => {
+            // For each product, loop through the product variants and format them
+            product.productVariants.forEach(variant => {
+                formattedVariants.push({
+                    id: variant._id,  // Using the variant's _id
+                    name: variant.name,  // Use the variant's name as the "product name"
+                    category: product.productCategory,  // Product category
+                    stockLevel: variant.stock,  // Variant stock level
+                    price: variant.price,  // Variant price
+                    status: variant.stock > 0 ? 'In Stock' : 'Low Stock',  // Stock status based on stock level
+                    image: product.imagePreview  // Assuming the product image is used for the variant
+                });
+            });
+        });
+
+        // Send the response with the formatted variants data
+        res.status(200).json({
+            message: "Variants Fetched Successfully",
+            variants: formattedVariants
+        });
+        console.log("Variants Fetched Successfully Completed!");
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Error Fetching Variants",
+            error: error.message
+        });
+        console.log("Variants Fetched Unsuccessfully!");
+    }
+});
+
+
+
+
 module.exports = router; // Make sure to export the router

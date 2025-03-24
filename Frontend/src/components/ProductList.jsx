@@ -1,70 +1,127 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Package, Search } from 'lucide-react';
-
+import axios from 'axios';
+import Swal from "sweetalert2";
 
 function ProductList({ onProductSelect, selectedProducts }) {
 
 
 
     const [searchQuery, setSearchQuery] = useState('');
-
-    const products = [
-      {
-        id: '1',
-        name: 'Xiaomi Note 9',
-        category: 'Mobile Phones',
-        stockLevel: 25,
-        price: 599,
-        status: 'In Stock',
-        image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
-      },
-      {
-        id: '2',
-        name: 'Innovex TV',
-        category: 'TV',
-        stockLevel: 5,
-        price: 150,
-        status: 'Low Stock',
-        image: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
-      },
-      {
-        id: '3',
-        name: 'Abans Refrigerator',
-        category: 'Appliances',
-        stockLevel: 1,
-        price: 999,
-        status: 'Out of Stock',
-        image: 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
-      },
-      {
-        id: '4',
-        name: 'Samsung Galaxy S21',
-        category: 'Mobile Phones',
-        stockLevel: 15,
-        price: 799,
-        status: 'In Stock',
-        image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
-      },
-      {
-        id: '5',
-        name: 'LG Smart TV',
-        category: 'TV',
-        stockLevel: 8,
-        price: 899,
-        status: 'In Stock',
-        image: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
-      },
-      {
-        id: '6',
-        name: 'Whirlpool Washing Machine',
-        category: 'Appliances',
-        stockLevel: 3,
-        price: 699,
-        status: 'Low Stock',
-        image: 'https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
-      }
-    ];
+    const [product, setProducts] = useState([]);
   
+
+    // const products = [
+    //   {
+    //     id: '1',
+    //     name: 'Xiaomi Note 9',
+    //     category: 'Mobile Phones',
+    //     stockLevel: 25,
+    //     price: 599,
+    //     status: 'In Stock',
+    //     image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    //   },
+    //   {
+    //     id: '2',
+    //     name: 'Innovex TV',
+    //     category: 'TV',
+    //     stockLevel: 5,
+    //     price: 150,
+    //     status: 'Low Stock',
+    //     image: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    //   },
+    //   {
+    //     id: '3',
+    //     name: 'Abans Refrigerator',
+    //     category: 'Appliances',
+    //     stockLevel: 1,
+    //     price: 999,
+    //     status: 'Out of Stock',
+    //     image: 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    //   },
+    //   {
+    //     id: '4',
+    //     name: 'Samsung Galaxy S21',
+    //     category: 'Mobile Phones',
+    //     stockLevel: 15,
+    //     price: 799,
+    //     status: 'In Stock',
+    //     image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    //   },
+    //   {
+    //     id: '5',
+    //     name: 'LG Smart TV',
+    //     category: 'TV',
+    //     stockLevel: 8,
+    //     price: 899,
+    //     status: 'In Stock',
+    //     image: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    //   },
+    //   {
+    //     id: '6',
+    //     name: 'Whirlpool Washing Machine',
+    //     category: 'Appliances',
+    //     stockLevel: 3,
+    //     price: 699,
+    //     status: 'Low Stock',
+    //     image: 'https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    //   }
+    // ];
+
+   
+    // useEffect(() => {
+    //     // Fetch data from the backend API when the component mounts
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const response = await axios.get('http://localhost:3001/api/getM');  // Replace with your API URL
+    //             if (response.status === 200) {
+    //                 setProducts(response.data.variants);  // Set the product variants to state
+    //                 //console.log("Feroo",product);
+    //                 console.log("Feroo",response.data.variants);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching products:', error);
+    //             Swal.fire('Error', 'There was an issue fetching products.', 'error');
+    //         }
+    //     };
+
+    //     fetchProducts();
+    // }, []);
+
+    const apiUrl = import.meta.env.VITE_APP_BACKENDGETM
+
+    useEffect(() => {
+      // Fetch data from the backend API when the component mounts
+      const fetchProducts = async () => {
+          try {
+              const response = await axios.get(apiUrl);  // Replace with your API URL
+              if (response.status === 200) {
+                  const formattedProducts = response.data.variants.map(product => {
+                      return {
+                          id: product.id,
+                          name: product.name || 'Unknown Product',
+                          category: product.category || 'Unknown Category',
+                          stockLevel: product.stockLevel || 0,
+                          price: parseFloat(product.price) || 0,
+                          status: product.status || 'Out of Stock',
+                          image: product.image || 'https://via.placeholder.com/150'  // Placeholder image if missing
+                      };
+                  });
+  
+                  setProducts(formattedProducts);  // Set the formatted product variants to state
+                  console.log("Formatted Products:", formattedProducts);
+              }
+          } catch (error) {
+              console.error('Error fetching products:', error);
+              Swal.fire('Error', 'There was an issue fetching products.', 'error');
+          }
+      };
+  
+      fetchProducts();
+  }, []);
+  
+  
+  const products = product;
     const getStatusColor = (status) => {
       switch (status) {
         case 'In Stock':
