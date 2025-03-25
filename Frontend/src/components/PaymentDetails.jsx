@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CreditCard, Calendar, ShoppingCart, Trash2 } from 'lucide-react';
 
 export default function PaymentDetails({
@@ -10,9 +10,13 @@ export default function PaymentDetails({
     paymentType,
     months
   }) {
+    const [downPayment, setDownPayment] = useState('');
+    
     // Ensure subtotal is a valid number before using toFixed
     const validSubtotal = typeof subtotal === 'number' && !isNaN(subtotal) ? subtotal : 0;
-    const monthlyPayment = paymentType === 'Easy Payment' ? validSubtotal / months : 0;
+    const numericDownPayment = downPayment === '' ? 0 : Number(downPayment);
+    const remainingBalance = validSubtotal - numericDownPayment;
+    const monthlyPayment = paymentType === 'Easy Payment' ? remainingBalance / months : 0;
 
     const handleCompletePurchase = () => {
       // Log product details
@@ -21,6 +25,8 @@ export default function PaymentDetails({
       // Log payment details
       console.log('Subtotal:', validSubtotal.toFixed(2));
       if (paymentType === 'Easy Payment') {
+        console.log('Down Payment:', numericDownPayment);
+        console.log('Remaining Balance:', remainingBalance.toFixed(2));
         console.log('Monthly Payment:', monthlyPayment.toFixed(2));
         console.log('Payment Type:', paymentType);
         console.log('Months:', months);
@@ -72,7 +78,10 @@ export default function PaymentDetails({
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
-                    onClick={() => onPaymentTypeChange('Full Payment')}
+                    onClick={() => {
+                      onPaymentTypeChange('Full Payment');
+                      setDownPayment('');
+                    }}
                   >
                     <CreditCard size={20} />
                     Full Payment
@@ -92,18 +101,31 @@ export default function PaymentDetails({
               </div>
   
               {paymentType === 'Easy Payment' && (
-                <div>
-                  <label className="block text-sm font-medium mb-2">Number of Months</label>
-                  <select
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    value={months}
-                    onChange={(e) => onMonthsChange(Number(e.target.value))}
-                  >
-                    <option value={3}>3 Months</option>
-                    <option value={6}>6 Months</option>
-                    <option value={12}>12 Months</option>
-                  </select>
-                </div>
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Down Payment ($)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max={validSubtotal}
+                      value={downPayment}
+                      onChange={(e) => setDownPayment(e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Number of Months</label>
+                    <select
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={months}
+                      onChange={(e) => onMonthsChange(Number(e.target.value))}
+                    >
+                      <option value={3}>3 Months</option>
+                      <option value={6}>6 Months</option>
+                      <option value={12}>12 Months</option>
+                    </select>
+                  </div>
+                </>
               )}
   
               <div className="space-y-2 pt-4 border-t">
@@ -113,10 +135,20 @@ export default function PaymentDetails({
                 </div>
                 
                 {paymentType === 'Easy Payment' && (
-                  <div className="flex justify-between text-blue-600">
-                    <span>Monthly Payment:</span>
-                    <span className="font-medium">${monthlyPayment.toFixed(2)}</span>
-                  </div>
+                  <>
+                    <div className="flex justify-between text-gray-600">
+                      <span>Down Payment:</span>
+                      <span className="font-medium">${numericDownPayment.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-gray-600">
+                      <span>Remaining Balance:</span>
+                      <span className="font-medium">${remainingBalance.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-blue-600">
+                      <span>Monthly Payment:</span>
+                      <span className="font-medium">${monthlyPayment.toFixed(2)}</span>
+                    </div>
+                  </>
                 )}
                 
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
@@ -125,8 +157,9 @@ export default function PaymentDetails({
                 </div>
               </div>
   
-              <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-               onClick={handleCompletePurchase}
+              <button 
+                className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                onClick={handleCompletePurchase}
               >
                 <CreditCard size={20} />
                 Complete Purchase
