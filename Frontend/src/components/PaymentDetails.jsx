@@ -21,6 +21,8 @@ export default function PaymentDetails({
   const handleCompletePurchase = () => {
     // Log product details
     console.log('Selected Products:', selectedProducts);
+    const productIds = selectedProducts?.map(product => product.id || 'ID not found');
+    console.log('Selected Product IDs:', productIds);
 
     // Log payment details
     console.log('Subtotal:', validSubtotal.toFixed(2));
