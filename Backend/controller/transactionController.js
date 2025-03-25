@@ -5,6 +5,8 @@ const Transaction = require("../models/Transaction.js")
 const User = require("../models/User.js");
 const Product = require("../models/Product.js");
 
+const { v4: uuidv4 } = require('uuid'); // To generate unique transaction IDs
+
 router.post('/savetransaction', async (req, res) => {
     try {
       // Extract data from the incoming request body
