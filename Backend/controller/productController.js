@@ -147,4 +147,44 @@ router.get('/getM', async (req, res) => {
 
 
 
+router.patch("/reduceQ", async (req, res) => {
+  try {
+    const { variantId } = req.body;  // Extract variantId from the request body
+    
+    // Find the product that contains the variant with the given variantId
+    const product = await Product.findOne({ "productVariants._id": variantId });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product with the specified variant not found" });
+    }
+
+    // Find the variant inside the product's productVariants array
+    const variant = product.productVariants.find(v => v._id.toString() === variantId);
+
+    if (!variant) {
+      return res.status(404).json({ message: "Product variant not found" });
+    }
+
+    // Check if the stock is greater than 0 before reducing
+    if (variant.stock <= 0) {
+      return res.status(400).json({ message: "No stock available to reduce" });
+    }
+
+    // Reduce the quantity of the variant by 1
+    variant.stock -= 1;
+
+    // Save the updated product back to the database
+    await product.save();
+
+    return res.status(200).json({ message: "Quantity reduced successfully", updatedProduct: product });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+});
+
+
+
+
+
 module.exports = router; // Make sure to export the router
