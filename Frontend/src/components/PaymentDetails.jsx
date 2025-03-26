@@ -154,9 +154,11 @@ export default function PaymentDetails({
         easyPaymentMonths: months,
       };
   console.log("This is sending Dataaaaaaaa",transactionData)
+  const apiUrl = import.meta.env.VITE_APP_BACKENDADDT
+
       try {
         // Send data to the backend using fetch
-        const response = await fetch('http://localhost:3001/api/savetransactionG', {
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
