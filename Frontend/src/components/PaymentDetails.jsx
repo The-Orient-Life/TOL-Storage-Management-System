@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { CreditCard, Calendar, ShoppingCart, Trash2 } from 'lucide-react';
+import axios from 'axios';
+import Swal from "sweetalert2";
+
 
 export default function PaymentDetails({
   selectedProducts,
@@ -11,6 +14,7 @@ export default function PaymentDetails({
   months
 }) {
   const [downPayment, setDownPayment] = useState('');
+  const [executiveNIC, setExecutiveNIC] = useState('');
 
   // Ensure subtotal is a valid number before using toFixed
   const validSubtotal = typeof subtotal === 'number' && !isNaN(subtotal) ? subtotal : 0;
@@ -18,48 +22,165 @@ export default function PaymentDetails({
   const remainingBalance = validSubtotal - numericDownPayment;
   const monthlyPayment = paymentType === 'Easy Payment' ? remainingBalance / months : 0;
 
-  const handleCompletePurchase = () => {
+  // const handleCompletePurchase = async () => {
+  //   // Log product details
+  //   console.log('Selected Products:', selectedProducts);
+  //   const productIds = selectedProducts?.map(product => product.id || 'ID not found');
+  //   console.log('Selected Product IDs:', productIds);
+
+  //   // Log payment details
+  //   console.log('Subtotal:', validSubtotal.toFixed(2));
+  //   const CustomerNic = sessionStorage.getItem("Customer NIC");
+  //   console.log("This Is Customer ", CustomerNic);
+  //   // Retrieve the data from sessionStorage
+  //   const storedUserDetails = sessionStorage.getItem('UserDetails');
+
+  //   // Check if the data exists
+  //   if (storedUserDetails) {
+  //     // Parse the data
+  //     const parsedUserDetails = JSON.parse(storedUserDetails);
+
+  //     // Check if 'data' exists and 'nicNumber' is inside 'data'
+  //     if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.nicNumber) {
+  //       const userNic = parsedUserDetails.data.nicNumber;
+  //       console.log("This Is Stuff Mem NIC: ", userNic);
+  //       setExecutiveNIC(userNic);
+  //     } else {
+  //       console.error("NIC Number is undefined or missing from stored data.");
+  //     }
+  //   } else {
+  //     console.error("No data found in sessionStorage for 'UserDetails'.");
+  //   }
+
+
+
+
+  //   if (paymentType === 'Easy Payment') {
+  //     console.log('Down Payment:', numericDownPayment);
+  //     console.log('Remaining Balance:', remainingBalance.toFixed(2));
+  //     console.log('Monthly Payment:', monthlyPayment.toFixed(2));
+  //     console.log('Payment Type:', paymentType);
+  //     console.log('Months:', months);
+
+
+  //      // Construct the data object to send to backend
+  //   const transactionData = {
+  //     customerNIC: CustomerNic,
+  //     executiveNIC: executiveNIC,
+  //     productVariantId: productIds[0], // Assuming you're sending the first selected product
+  //     subtotal: validSubtotal,
+  //     downPayment: numericDownPayment,
+  //     remainingBalance: remainingBalance,
+  //     monthlyPayment: monthlyPayment,
+  //     paymentType: paymentType,
+  //     easyPaymentMonths: months,
+  //   };
+
+  //   try {
+  //     // Send data to the backend using fetch
+  //     const response = await fetch('http://localhost:3001/api/savetransactionG', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(transactionData),
+  //     });
+
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       console.log('Transaction saved successfully', data);
+  //       // Handle success (e.g., show confirmation message, redirect, etc.)
+  //     } else {
+  //       console.error('Error saving transaction:', data.message);
+  //       // Handle error (e.g., show error message to the user)
+  //     }
+  //   } catch (error) {
+  //     console.error('Error sending transaction data:', error);
+  //   }
+  
+
+  //   } else {
+  //     console.log('Payment Type:', paymentType);
+  //   }
+  // };
+
+  const handleCompletePurchase = async () => {
     // Log product details
     console.log('Selected Products:', selectedProducts);
     const productIds = selectedProducts?.map(product => product.id || 'ID not found');
     console.log('Selected Product IDs:', productIds);
-
+  
     // Log payment details
     console.log('Subtotal:', validSubtotal.toFixed(2));
     const CustomerNic = sessionStorage.getItem("Customer NIC");
-    console.log("This Is Customer ", CustomerNic);
+    console.log("This Is Customer NIC: ", CustomerNic);
+  
     // Retrieve the data from sessionStorage
     const storedUserDetails = sessionStorage.getItem('UserDetails');
-
-    // Check if the data exists
+    let executiveNIC = ''; // Assuming executive NIC needs to be set as well
     if (storedUserDetails) {
       // Parse the data
       const parsedUserDetails = JSON.parse(storedUserDetails);
-
+  
       // Check if 'data' exists and 'nicNumber' is inside 'data'
       if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.nicNumber) {
-        const userNic = parsedUserDetails.data.nicNumber;
-        console.log("This Is Stuff Mem NIC: ", userNic);
+        executiveNIC = parsedUserDetails.data.nicNumber;
+        console.log("This Is Executive NIC: ", executiveNIC);
       } else {
         console.error("NIC Number is undefined or missing from stored data.");
       }
     } else {
       console.error("No data found in sessionStorage for 'UserDetails'.");
     }
-
-
-
-
+  
+    // Prepare data to send for "Easy Payment"
     if (paymentType === 'Easy Payment') {
       console.log('Down Payment:', numericDownPayment);
       console.log('Remaining Balance:', remainingBalance.toFixed(2));
       console.log('Monthly Payment:', monthlyPayment.toFixed(2));
       console.log('Payment Type:', paymentType);
       console.log('Months:', months);
+  
+      // Construct the data object to send to backend
+      const transactionData = {
+        customerNIC: CustomerNic,
+        executiveNIC: executiveNIC,
+        productVariantId: productIds[0], // Assuming you're sending the first selected product
+        subtotal: validSubtotal,
+        downPayment: numericDownPayment,
+        remainingBalance: remainingBalance,
+        monthlyPayment: monthlyPayment,
+        paymentType: paymentType,
+        easyPaymentMonths: months,
+      };
+  console.log("This is sending Dataaaaaaaa",transactionData)
+      try {
+        // Send data to the backend using fetch
+        const response = await fetch('http://localhost:3001/api/savetransactionG', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(transactionData),
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          console.log('Transaction saved successfully', data);
+          // Handle success (e.g., show confirmation message, redirect, etc.)
+        } else {
+          console.error('Error saving transaction:', data.message);
+          // Handle error (e.g., show error message to the user)
+        }
+      } catch (error) {
+        console.error('Error sending transaction data:', error);
+      }
     } else {
       console.log('Payment Type:', paymentType);
+      // Handle other payment types if necessary
     }
   };
+  
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
