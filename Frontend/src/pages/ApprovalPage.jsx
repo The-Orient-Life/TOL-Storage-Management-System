@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import axios from 'axios';
@@ -155,77 +155,93 @@ TransactionRow.propTypes = {
 
 function Approval() {
   const [expandedRow, setExpandedRow] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Fetch transactions from the backend
+    axios
+      .get('http://localhost:3001/api/gettransactions') // Replace with your backend URL
+      .then((response) => {
+        setTransactions(response.data.transactions); // Set transactions in state
+        setLoading(false); // Stop loading
+      })
+      .catch((error) => {
+        console.error('Error fetching transactions:', error);
+        setLoading(false);
+      });
+  }, []);
 
   // Sample transactions array with multiple entries
-  const transactions = Array(10).fill().map((_, index) => ({
-    "_id": { "$oid": `67e51f9094869bf16116ca2${index}` },
-    "transactionID": `e2360f12-a096-4e3d-8a14-adc09b4864${index}f`,
-    "customerName": `Customer ${index + 1}`,
-    "customerNIC": "123456789V",
-    "product": {
-      "productID": "67e5057febfcab56e22f22f7",
-      "productName": "HG 21 Headset",
-      "productQuantity": 1
-    },
-    "executive": {
-      "executiveName": "Kesari",
-      "executiveNIC": "112233445V",
-      "_id": { "$oid": "67e51f9094869bf16116ca22" }
-    },
-    "guarantors": [
-      {
-        "guarantorName": "Guarantor 1",
-        "guarantorNIC": "987654321V",
-        "_id": { "$oid": "67d15103b7d6897c350c9400" }
-      },
-      {
-        "guarantorName": "Guarantor 2",
-        "guarantorNIC": "89765231",
-        "_id": { "$oid": "67d15103b7d6897c350c9401" }
-      }
-    ],
-    "easyPayment": {
-      "payments": [
-        {
-          "amount": 66.67,
-          "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
-          "dueAmount": 200,
-          "dueDate": { "$date": "2025-04-27T09:51:12.898Z" },
-          "easyPaymentMonth": 1,
-          "easyPaymentYear": 2025,
-          "status": "pending",
-          "_id": { "$oid": `67e51f9094869bf16116ca${index}5` }
-        },
-        {
-          "amount": 66.67,
-          "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
-          "dueAmount": 133.33,
-          "dueDate": { "$date": "2025-05-27T09:51:12.898Z" },
-          "easyPaymentMonth": 2,
-          "easyPaymentYear": 2025,
-          "status": "pending",
-          "_id": { "$oid": `67e51f9094869bf16116ca${index}6` }
-        },
-        {
-          "amount": 66.67,
-          "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
-          "dueAmount": 66.67,
-          "dueDate": { "$date": "2025-06-27T09:51:12.898Z" },
-          "easyPaymentMonth": 3,
-          "easyPaymentYear": 2025,
-          "status": "pending",
-          "_id": { "$oid": `67e51f9094869bf16116ca${index}7` }
-        }
-      ]
-    },
-    "paymentMethod": "Full Payment",
-    "branch": "Katana",
-    "status": "Pending",
-    "headAdminApproval": false,
-    "penalty": null,
-    "createdAt": { "$date": "2025-03-27T09:51:12.918Z" },
-    "updatedAt": { "$date": "2025-03-27T09:51:12.918Z" }
-  }));
+//   const transactions = Array(10).fill().map((_, index) => ({
+//     "_id": { "$oid": `67e51f9094869bf16116ca2${index}` },
+//     "transactionID": `e2360f12-a096-4e3d-8a14-adc09b4864${index}f`,
+//     "customerName": `Customer ${index + 1}`,
+//     "customerNIC": "123456789V",
+//     "product": {
+//       "productID": "67e5057febfcab56e22f22f7",
+//       "productName": "HG 21 Headset",
+//       "productQuantity": 1
+//     },
+//     "executive": {
+//       "executiveName": "Kesari",
+//       "executiveNIC": "112233445V",
+//       "_id": { "$oid": "67e51f9094869bf16116ca22" }
+//     },
+//     "guarantors": [
+//       {
+//         "guarantorName": "Guarantor 1",
+//         "guarantorNIC": "987654321V",
+//         "_id": { "$oid": "67d15103b7d6897c350c9400" }
+//       },
+//       {
+//         "guarantorName": "Guarantor 2",
+//         "guarantorNIC": "89765231",
+//         "_id": { "$oid": "67d15103b7d6897c350c9401" }
+//       }
+//     ],
+//     "easyPayment": {
+//       "payments": [
+//         {
+//           "amount": 66.67,
+//           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
+//           "dueAmount": 200,
+//           "dueDate": { "$date": "2025-04-27T09:51:12.898Z" },
+//           "easyPaymentMonth": 1,
+//           "easyPaymentYear": 2025,
+//           "status": "pending",
+//           "_id": { "$oid": `67e51f9094869bf16116ca${index}5` }
+//         },
+//         {
+//           "amount": 66.67,
+//           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
+//           "dueAmount": 133.33,
+//           "dueDate": { "$date": "2025-05-27T09:51:12.898Z" },
+//           "easyPaymentMonth": 2,
+//           "easyPaymentYear": 2025,
+//           "status": "pending",
+//           "_id": { "$oid": `67e51f9094869bf16116ca${index}6` }
+//         },
+//         {
+//           "amount": 66.67,
+//           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
+//           "dueAmount": 66.67,
+//           "dueDate": { "$date": "2025-06-27T09:51:12.898Z" },
+//           "easyPaymentMonth": 3,
+//           "easyPaymentYear": 2025,
+//           "status": "pending",
+//           "_id": { "$oid": `67e51f9094869bf16116ca${index}7` }
+//         }
+//       ]
+//     },
+//     "paymentMethod": "Full Payment",
+//     "branch": "Katana",
+//     "status": "Pending",
+//     "headAdminApproval": false,
+//     "penalty": null,
+//     "createdAt": { "$date": "2025-03-27T09:51:12.918Z" },
+//     "updatedAt": { "$date": "2025-03-27T09:51:12.918Z" }
+//   }));
 
   const handleApprove = (transactionId) => {
     console.log(`Approved transaction: ${transactionId}`);
