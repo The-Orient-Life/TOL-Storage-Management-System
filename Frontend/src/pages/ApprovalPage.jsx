@@ -37,13 +37,13 @@ function TransactionRow({ transaction, expandedRow, toggleExpand, handleApprove,
         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
           <div className="flex space-x-4">
             <button
-              onClick={() => handleApprove(transaction._id.$oid)}
+              onClick={() => handleApprove(transaction.transactionID)}
               className="text-green-600 hover:text-green-900 transition-colors p-1 hover:bg-green-50 rounded-full"
             >
               <Check size={20} />
             </button>
             <button
-              onClick={() => handleDecline(transaction._id.$oid)}
+              onClick={() => handleDecline(transaction.transactionID)}
               className="text-red-600 hover:text-red-900 transition-colors p-1 hover:bg-red-50 rounded-full"
             >
               <X size={20} />
