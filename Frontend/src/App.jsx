@@ -13,6 +13,7 @@ import AddProductForm from "./components/AddProductForm";
 import UserRegister from "./pages/UserRegister"; 
 import LoginPage from "./pages/LoginPage"; 
 import Dashboard from "./pages/Dashboard";
+import Approval from "./pages/ApprovalPage";
 
 function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(true); // Sidebar open by default
@@ -42,6 +43,7 @@ function App() {
           <Route exact path="/productadd" element={<AddProductForm />} />
           <Route exact path="/adduser" element={<UserRegister />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
+          <Route exact path="/approval" element={<Approval/>} />
         </Routes>
       </div>
     </div>

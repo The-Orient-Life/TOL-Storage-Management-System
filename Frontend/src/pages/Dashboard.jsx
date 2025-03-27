@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { CheckCircleIcon, XCircleIcon, ArrowUpIcon, ArrowDownIcon, CurrencyDollarIcon, UserGroupIcon, ClockIcon } from '@heroicons/react/24/solid';
-
+import { useNavigate } from 'react-router-dom';
 const data = [
   { name: 'Jan', easyPayment: 4000, cashPayment: 2400 },
   { name: 'Feb', easyPayment: 3000, cashPayment: 1398 },
@@ -53,6 +53,11 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function Dashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate('/approval'); // replace with your target route
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -115,7 +120,9 @@ export default function Dashboard() {
             <p className="text-sm text-gray-500">Compared to last month</p>
           </div>
           
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
+              onClick={handleClick}
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-yellow-100 rounded-lg">
                 <ClockIcon className="h-7 w-7 text-yellow-600" />
