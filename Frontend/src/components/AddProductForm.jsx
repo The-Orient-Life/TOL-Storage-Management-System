@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Package, DollarSign, AlertCircle, Upload, Minus, Plus } from 'lucide-react'
+import axios from 'axios';
+import Swal from "sweetalert2";
 
-function App() {
+function AddProduct() {
   const [productName, setProductName] = useState("")
   const [category, setCategory] = useState("")
   const [variants, setVariants] = useState([
@@ -71,45 +73,105 @@ function App() {
     setVariants(newVariants)
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  // const handleSubmit = (e) => {
+  //   e.preventDefault()
     
+  //   if (!productName || !category) {
+  //     setFormError("Please fill in all required fields")
+  //     return
+  //   }
+
+  //   if (variants.some(v => !v.name || !v.price)) {
+  //     setFormError("Please fill in all variant details")
+  //     return
+  //   }
+
+  //   // Form is valid
+  //   setFormError("")
+
+  //   // Format the data for logging
+  //   const formData = {
+  //     productName,
+  //     category,
+  //     variants: variants.map(variant => ({
+  //       name: variant.name,
+  //       price: parseFloat(variant.price) || 0,
+  //       stock: parseInt(variant.stock) || 0
+  //     })),
+  //     totalWorth,
+  //     stockStatus,
+  //     image: imagePreview ? 'Image uploaded' : 'No image'
+  //   }
+
+  //   // Log the formatted data
+  //   console.log('Product Added:', formData)
+
+  //   // Clear form after successful submission
+  //   setProductName("")
+  //   setCategory("")
+  //   setVariants([{ name: "", stock: "", price: "" }])
+  //   setImagePreview("")
+  // }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
     if (!productName || !category) {
-      setFormError("Please fill in all required fields")
-      return
+      setFormError("Please fill in all required fields");
+      return;
     }
-
+  
     if (variants.some(v => !v.name || !v.price)) {
-      setFormError("Please fill in all variant details")
-      return
+      setFormError("Please fill in all variant details");
+      return;
     }
-
+  
     // Form is valid
-    setFormError("")
-
-    // Format the data for logging
+    setFormError("");
+  
+    // Format the data for the API
     const formData = {
       productName,
-      category,
-      variants: variants.map(variant => ({
+      productCategory: category,  // Use 'category' here
+      productVariants: variants.map((variant) => ({
         name: variant.name,
         price: parseFloat(variant.price) || 0,
         stock: parseInt(variant.stock) || 0
       })),
-      totalWorth,
-      stockStatus,
-      image: imagePreview ? 'Image uploaded' : 'No image'
+      productTotalWorth: totalWorth,
+      productStockStatus: stockStatus,
+      imagePreview: imagePreview // This will be the image URL
+    };
+  
+    try {
+      // Make the API request to add the product
+      const regURL = import.meta.env.VITE_APP_BACKENDADD;
+
+      const response = await axios.post(regURL, formData);
+      if (response.status === 201) {
+        // Show success message
+        Swal.fire({
+          icon: "success",
+          title: "Product Added Successfully",
+          text: response.data.message
+        });
+  
+        // Reset form fields after successful submission
+        setProductName("");
+        setCategory("");
+        setVariants([{ name: "", stock: "", price: "" }]);
+        setImagePreview("");
+      }
+    } catch (error) {
+      // Handle error if API call fails
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.message || "Something went wrong"
+      });
     }
+  };
 
-    // Log the formatted data
-    console.log('Product Added:', formData)
-
-    // Clear form after successful submission
-    setProductName("")
-    setCategory("")
-    setVariants([{ name: "", stock: "", price: "" }])
-    setImagePreview("")
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -288,4 +350,4 @@ function App() {
   )
 }
 
-export default App
+export default AddProduct;
