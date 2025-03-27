@@ -73,7 +73,7 @@ const transactionSchema = new Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['Cash', 'Credit', 'Debit', 'Online','Easy Payment'],
+    enum: ['Cash', 'Credit', 'Debit', 'Online','Easy Payment','Full Payment'],
     required: true,
   },
   branch: { type: String, required: true },

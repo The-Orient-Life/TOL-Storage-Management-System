@@ -134,7 +134,7 @@ export default function PaymentDetails({
     }
   
     // Prepare data to send for "Easy Payment"
-    if (paymentType === 'Easy Payment') {
+    if (paymentType === 'Easy Payment' || paymentType === 'Full Payment') {
       console.log('Down Payment:', numericDownPayment);
       console.log('Remaining Balance:', remainingBalance.toFixed(2));
       console.log('Monthly Payment:', monthlyPayment.toFixed(2));
