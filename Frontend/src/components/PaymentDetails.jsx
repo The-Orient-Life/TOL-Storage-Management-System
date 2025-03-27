@@ -169,10 +169,26 @@ export default function PaymentDetails({
         const data = await response.json();
         if (response.ok) {
           console.log('Transaction saved successfully', data);
+          Swal.fire({
+                  position: "center",
+                  icon: "success",
+                  title: "Successful",
+                  showConfirmButton: false,
+                  iconColor: "#4BB543",
+                  timer: 2000,
+                });
           // Handle success (e.g., show confirmation message, redirect, etc.)
         } else {
           console.error('Error saving transaction:', data.message);
           // Handle error (e.g., show error message to the user)
+          Swal.fire({
+                  position: "center",
+                  icon: "error",
+                  title: "Unsuccessful",
+                  showConfirmButton: false,
+                  iconColor: "#4BB543",
+                  timer: 2000,
+                });
         }
       } catch (error) {
         console.error('Error sending transaction data:', error);
