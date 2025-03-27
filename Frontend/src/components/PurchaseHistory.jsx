@@ -1,49 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Search, Calendar, DollarSign, User } from 'lucide-react';
 
 const PurchaseHistory = () => {
+  const [purchases, setPurchases] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
 
-  const purchases = [
-    {
-      id: 1,
-      customer: 'John Doe',
-      cNic: 20012345678,
-      eNic: 20012345678,
-      eCommission: "Rs.2000",
-      product: 'Xiaomi Note 9',
-      date: '2024-02-20',
-      amount: 999,
-      status: 'Completed',
-      paymentType: 'Full Payment',
-    },
-    {
-      id: 2,
-      customer: 'Jane Smith',
-      cNic: 20012345678,
-      eNic: 20012345678,
-      eCommission: "Rs.2000",
-      product: 'Innovex TV',
-      date: '2024-02-18',
-      amount: 1500,
-      status: 'In Progress',
-      paymentType: 'Easy Payment (6 months)',
-      installments: {
-        total: 6,
-        paid: 2,
-        monthlyAmount: 250,
-        nextPayment: '2024-03-18',
-        payments: [
-          { date: '2024-02-18', amount: 250, status: 'Paid' },
-          { date: '2024-03-18', amount: 250, status: 'Pending' },
-          { date: '2024-04-18', amount: 250, status: 'Pending' },
-          { date: '2024-05-18', amount: 250, status: 'Pending' },
-          { date: '2024-06-18', amount: 250, status: 'Pending' },
-          { date: '2024-07-18', amount: 250, status: 'Pending' },
-        ]
+  // Fetching the purchases from the backend
+  useEffect(() => {
+    const fetchPurchases = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/gettransactions'); // Replace with actual URL
+        const transactions = response.data.transactions;
+        
+        // Mapping backend data to frontend format
+        const formattedPurchases = transactions.map((transaction) => ({
+          id: transaction.transactionID,  // Mapping transactionID as the frontend 'id'
+          customer: transaction.customerName,
+          cNic: transaction.customerNIC,
+          eNic: transaction.executive.executiveNIC,
+          eCommission: "Rs.2000",  // This can be calculated or fetched if needed
+          product: transaction.product.productName,
+          date: new Date(transaction.createdAt).toLocaleDateString(), // Convert to readable date format
+          amount: transaction.easyPayment.payments.reduce((sum, payment) => sum + payment.amount, 0), // Sum of all payments
+          status: transaction.status,
+          paymentType: transaction.paymentMethod,
+          installments: transaction.easyPayment.payments.length > 0 ? {
+            total: transaction.easyPayment.payments.length,
+            paid: transaction.easyPayment.payments.filter(payment => payment.status === 'paid').length,
+            monthlyAmount: transaction.easyPayment.payments[0]?.amount || 0,
+            nextPayment: transaction.easyPayment.payments[transaction.easyPayment.payments.length - 1]?.dueDate,
+            payments: transaction.easyPayment.payments
+          } : null,
+        }));
+
+        setPurchases(formattedPurchases);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
       }
-    },
-  ];
+    };
+
+    fetchPurchases();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>

@@ -60,7 +60,7 @@ export default function Dashboard() {
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-3xl font-bold text-gray-900">Payment Dashboard</h1>
           <div className="flex gap-2">
-            <button 
+            {/* <button 
               onClick={() => setSelectedPeriod('monthly')}
               className={`px-4 py-2 rounded-lg transition-all ${
                 selectedPeriod === 'monthly' 
@@ -69,8 +69,8 @@ export default function Dashboard() {
               }`}
             >
               Monthly
-            </button>
-            <button 
+            </button> */}
+            {/* <button 
               onClick={() => setSelectedPeriod('yearly')}
               className={`px-4 py-2 rounded-lg transition-all ${
                 selectedPeriod === 'yearly' 
@@ -79,7 +79,7 @@ export default function Dashboard() {
               }`}
             >
               Yearly
-            </button>
+            </button> */}
           </div>
         </div>
         
