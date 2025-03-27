@@ -5,14 +5,14 @@ import axios from 'axios';
 import Swal from "sweetalert2";
 
 function TransactionRow({ transaction, expandedRow, toggleExpand, handleApprove, handleDecline, formatDate }) {
-  const isExpanded = expandedRow === transaction._id.$oid;
+  const isExpanded = expandedRow === transaction.transactionID;
 
   return (
     <>
       <tr className="hover:bg-gray-50 transition-colors">
         <td className="px-6 py-4">
           <button
-            onClick={() => toggleExpand(transaction._id.$oid)}
+            onClick={() => toggleExpand(transaction.transactionID)}
             className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
