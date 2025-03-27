@@ -192,117 +192,233 @@ router.get('/customer/:customerNIC', async (req, res) => {
   //   }
   // });
   
-  router.post('/savetransactionG', async (req, res) => {
-    try {
-      const {
-        customerNIC,
-        executiveNIC,
-        productVariantId,
-        subtotal,
-        downPayment,
-        remainingBalance,
-        monthlyPayment,
-        paymentType,
-        easyPaymentMonths
-      } = req.body;
-  
-      // Find customer by NIC
-      const customer = await User.findOne({ nicNumber: customerNIC });
-      if (!customer) {
-        return res.status(404).json({ message: 'Customer not found' });
-      }
-  
-      // Find executive by NIC
-      const executive = await User.findOne({ nicNumber: executiveNIC });
-      if (!executive) {
-        return res.status(404).json({ message: 'Executive not found' });
-      }
-  
-      // Find product variant by ID
-      const product = await Product.findOne({ 'productVariants._id': productVariantId });
+
+// POST route to find a single productVariant by its ID
+router.post('/findQ', async (req, res) => {
+  try {
+      // Get the variantId from the request body
+      const { variantId } = req.body; // variantId should be a single ObjectId string
+      
+      // Query the Product collection for the product that contains the variantId
+      const product = await Product.findOne({
+          'productVariants._id': variantId // Find the product containing the matching variantId
+      }).select('productVariants'); // Only return the productVariants field
+
       if (!product) {
-        return res.status(404).json({ message: 'Product variant not found' });
+          return res.status(404).json({ message: 'Product not found' });
       }
-  
-      // Retrieve the product variant details
-      const productVariant = product.productVariants.find(variant => variant._id.toString() === productVariantId);
-  
-      // Ensure guarantors are populated with required fields
-      let guarantors = customer.guarantors || [];
-  
-      // Ensure each guarantor has the required fields
-      guarantors = guarantors.map(guarantor => ({
-        guarantorNIC: guarantor.nicNumber,  // Assuming `nicNumber` is the NIC field
-        guarantorName: guarantor.userName, // Assuming `userName` is the name field
-        ...guarantor,  // Spread the remaining guarantor fields
-      }));
-  
-      // If guarantors array is empty, we can set it to an empty array or add placeholders
-      if (guarantors.length === 0) {
-        guarantors = [];  // Or, if needed, you can add placeholders here.
+
+      // Find the specific variant from the product's variants
+      const foundVariant = product.productVariants.find(variant => String(variant._id) === String(variantId));
+
+      if (!foundVariant) {
+          return res.status(404).json({ message: 'Variant not found' });
       }
-  
-      // Calculate total price after commission (3% commission)
-      const commission = (subtotal * 3) / 100;
-      const totalAmount = subtotal; //+ commission;
-      const remainingAmount = totalAmount - downPayment;
-      const monthlyPaymentCalculated = remainingAmount / easyPaymentMonths;
-  console.log("Commission - ",commission, "TotalAmount - ",totalAmount, "Remaining Amount - ",remainingAmount, "monthly Pay - ", monthlyPaymentCalculated);
-      // Create the easy payment schedule
-      const payments = [];
-      let dueAmount = remainingAmount;
-      for (let i = 0; i < easyPaymentMonths; i++) {
-        const payment = {
-          amount: monthlyPaymentCalculated,
-          doneDate: new Date(),
-          dueAmount: dueAmount,
-          dueDate: new Date(new Date().setMonth(new Date().getMonth() + i + 1)),
-          easyPaymentMonth: i + 1,
-          easyPaymentYear: new Date().getFullYear(),
-          status: 'pending'
-        };
-        payments.push(payment);
-        dueAmount -= monthlyPaymentCalculated;  // Decrease due amount
-      }
-  
-      // Generate the transaction ID using uuid
-      const transactionID = uuidv4();
-  
-      // Create the transaction object
-      const transaction = new Transaction({
-        transactionID: transactionID,
-        customerName: customer.userName,
-        customerNIC: customerNIC,
-        product: {
-          productID: product._id,
-          productName: product.productName,
-          productQuantity: 1
-        },
-        executive: {
-          executiveName: executive.userName,
-          executiveNIC: executiveNIC
-        },
-        guarantors: guarantors,  // Use the customer's guarantors or an empty array
-        easyPayment: {
-          payments: payments
-        },
-        paymentMethod: paymentType,
-        branch: customer.branch,
-        status: 'Pending',
-        commotion: commission,
-        headAdminApproval: false,
-        penalty: null
-      });
-  
-      // Save the transaction to the database
-      await transaction.save();
-  
-      return res.status(201).json({ message: 'Transaction saved successfully', transaction });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+
+      // Format the response as per your required structure
+      const formattedData = {
+          name: foundVariant.name,      // The variant's name (e.g., "64GB")
+          stock: foundVariant.stock,    // The variant's stock
+          price: foundVariant.price,    // The variant's price (keep as string)
+          _id: foundVariant._id         // The variant's _id
+      };
+
+      console.log(formattedData); // Log the formatted data
+
+      return res.status(200).json(formattedData); // Return the formatted data as JSON
+  } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Helper function to get product variant details by ID
+async function getProductVariantDetails(variantId) {
+  try {
+    // Query the Product collection for the product containing the variantId
+    const product = await Product.findOne({
+      'productVariants._id': variantId
+    }).select('productVariants'); // Only return the productVariants field
+
+    if (!product) {
+      throw new Error('Product not found');
     }
-  });
+
+    // Find the specific variant from the product's variants
+    const foundVariant = product.productVariants.find(variant => String(variant._id) === String(variantId));
+
+    if (!foundVariant) {
+      throw new Error('Variant not found');
+    }
+
+    // Return the necessary data
+    return {
+      name: foundVariant.name,
+      stock: foundVariant.stock,
+      price: foundVariant.price,
+      _id: foundVariant._id
+    };
+  } catch (err) {
+    throw new Error('Error fetching product variant details: ' + err.message);
+  }
+}
+
+// POST route to save the transaction
+router.post('/savetransactionGWQ', async (req, res) => {
+  try {
+    const {
+      customerNIC,
+      executiveNIC,
+      productVariantId,
+      subtotal,
+      downPayment,
+      remainingBalance,
+      monthlyPayment,
+      paymentType,
+      easyPaymentMonths
+    } = req.body;
+
+    // Find customer by NIC
+    const customer = await User.findOne({ nicNumber: customerNIC });
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Find executive by NIC
+    const executive = await User.findOne({ nicNumber: executiveNIC });
+    if (!executive) {
+      return res.status(404).json({ message: 'Executive not found' });
+    }
+
+    // Get product variant details using the helper function
+    let productVariant;
+    try {
+      productVariant = await getProductVariantDetails(productVariantId);
+    } catch (err) {
+      return res.status(404).json({ message: err.message });
+    }
+
+    // Ensure guarantors are populated with required fields
+    let guarantors = customer.guarantors || [];
+
+    // Ensure each guarantor has the required fields
+    guarantors = guarantors.map(guarantor => ({
+      guarantorNIC: guarantor.nicNumber,
+      guarantorName: guarantor.userName,
+      ...guarantor,
+    }));
+
+    if (guarantors.length === 0) {
+      guarantors = []; // Or add placeholders if needed
+    }
+
+    // Calculate total price after commission (3% commission)
+    const commission = (subtotal * 3) / 100;
+    const totalAmount = subtotal; //+ commission;
+    const remainingAmount = totalAmount - downPayment;
+    const monthlyPaymentCalculated = remainingAmount / easyPaymentMonths;
+    
+    console.log("Commission - ", commission, "TotalAmount - ", totalAmount, "Remaining Amount - ", remainingAmount, "monthly Pay - ", monthlyPaymentCalculated);
+
+    // Create the easy payment schedule
+    const payments = [];
+    let dueAmount = remainingAmount;
+    for (let i = 0; i < easyPaymentMonths; i++) {
+      const payment = {
+        amount: monthlyPaymentCalculated,
+        doneDate: new Date(),
+        dueAmount: dueAmount,
+        dueDate: new Date(new Date().setMonth(new Date().getMonth() + i + 1)),
+        easyPaymentMonth: i + 1,
+        easyPaymentYear: new Date().getFullYear(),
+        status: 'pending'
+      };
+      payments.push(payment);
+      dueAmount -= monthlyPaymentCalculated;  // Decrease due amount
+    }
+
+    // Generate the transaction ID using uuid
+    const transactionID = uuidv4();
+
+    // Check if full payment has been made
+    let transactionStatus = 'Pending';
+    if (remainingBalance === 0) {
+      if (productVariant.stock <= 0) {
+        console.log('Insufficient quantity available for this product variant');
+        return res.status(400).json({ message: 'Insufficient product quantity' });
+      }
+
+      // Reduce the product variant quantity by 1
+      console.log('Reducing quantity of product variant');
+      productVariant.stock -= 1;
+
+      // Save the updated product with reduced quantity
+      await Product.updateOne(
+        { 'productVariants._id': productVariant._id },
+        { $set: { 'productVariants.$.stock': productVariant.stock } }
+      );
+
+      // Update transaction status to 'Completed'
+      transactionStatus = 'Completed';
+    }
+
+    // Create the transaction object
+    const transaction = new Transaction({
+      transactionID: transactionID,
+      customerName: customer.userName,
+      customerNIC: customerNIC,
+      product: {
+        productID: productVariant._id,
+        productName: productVariant.name,
+        productQuantity: 1
+      },
+      executive: {
+        executiveName: executive.userName,
+        executiveNIC: executiveNIC
+      },
+      guarantors: guarantors,
+      easyPayment: {
+        payments: payments
+      },
+      paymentMethod: paymentType,
+      branch: customer.branch,
+      status: transactionStatus,
+      commission: commission,
+      headAdminApproval: false,
+      penalty: null
+    });
+
+    // Save the transaction to the database
+    await transaction.save();
+
+    return res.status(201).json({ message: 'Transaction saved successfully', transaction });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+});
+
+// GET route to retrieve all transactions
+router.get('/gettransactions', async (req, res) => {
+  try {
+    // Retrieve all transactions from the database
+    const transactions = await Transaction.find();
+
+    // If no transactions are found, return a 404 error
+    if (!transactions || transactions.length === 0) {
+      return res.status(404).json({ message: 'No transactions found' });
+    }
+
+    // Return the list of transactions
+    return res.status(200).json({ message: 'Transactions retrieved successfully', transactions });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+});
+
+
+
   
 
 module.exports = router;
