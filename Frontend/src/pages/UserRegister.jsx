@@ -32,7 +32,7 @@ function UserRegister() {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Login Successful",
+        title: "Registration Successfully",
         showConfirmButton: false,
         iconColor: "#4BB543",
         timer: 2000,

@@ -402,7 +402,7 @@ router.post('/savetransactionGWQ', async (req, res) => {
 router.get('/gettransactions', async (req, res) => {
   try {
     // Retrieve all transactions from the database
-    const transactions = await Transaction.find();
+    const transactions = await Transaction.find({ headAdminApproval: false });
 
     // If no transactions are found, return a 404 error
     if (!transactions || transactions.length === 0) {
@@ -417,6 +417,79 @@ router.get('/gettransactions', async (req, res) => {
   }
 });
 
+
+// // A separate function to reduce the stock of a product variant
+const reduceVariantStock = async (variantId) => {
+  try {
+    // Find the product that contains the variant with the given variantId
+    const product = await Product.findOne({ "productVariants._id": variantId });
+
+    if (!product) {
+      throw new Error("Product with the specified variant not found");
+    }
+
+    // Find the variant inside the product's productVariants array
+    const variant = product.productVariants.find(v => v._id.toString() === variantId);
+
+    if (!variant) {
+      throw new Error("Product variant not found");
+    }
+
+    // Check if the stock is greater than 0 before reducing
+    if (variant.stock <= 0) {
+      throw new Error("No stock available to reduce");
+    }
+
+    // Reduce the quantity of the variant by 1
+    variant.stock -= 1;
+
+    // Save the updated product back to the database
+    await product.save();
+
+    return { product, message: "Quantity reduced successfully" };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// router.post('/transactions', (req,res) => {
+   
+
+// })
+
+
+// API route to handle updating head admin approval and reduce product stock
+router.post('/transactionsBN', async (req, res) => {
+  const { transactionID } = req.body;  // Assuming the transaction ID is sent in the request body
+
+  try {
+    // Find the transaction using the provided transaction ID
+    const transaction = await Transaction.findOne({ transactionID });
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Update the headAdminApproval field to true
+    transaction.headAdminApproval = true;
+
+    // Save the updated transaction
+    await transaction.save();
+
+    // Reduce the stock of the associated product
+    const productID = transaction.product.productID;  // Assuming productID is stored in the transaction
+    const result = await reduceVariantStock(productID);
+
+    // Respond with success
+    return res.status(200).json({
+      message: "Transaction approved and product stock reduced successfully",
+      product: result.product,
+    });
+  } catch (error) {
+    // Catch and handle errors
+    return res.status(500).json({ message: error.message });
+  }
+});
 
 
   

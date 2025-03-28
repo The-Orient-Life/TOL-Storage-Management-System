@@ -160,8 +160,9 @@ function Approval() {
   
   useEffect(() => {
     // Fetch transactions from the backend
+    const apiUrl = import.meta.env.VITE_APP_BACKENDGETTRS;
     axios
-      .get('http://localhost:3001/api/gettransactions') // Replace with your backend URL
+      .get(apiUrl) // Replace with your backend URL
       .then((response) => {
         setTransactions(response.data.transactions); // Set transactions in state
         setLoading(false); // Stop loading
@@ -243,9 +244,40 @@ function Approval() {
 //     "updatedAt": { "$date": "2025-03-27T09:51:12.918Z" }
 //   }));
 
+// Function to send the transactionID to the API
+const approveTransaction = async (transactionID) => {
+  try {
+    // Define the API URL (make sure to replace it with your actual endpoint)
+    const apiUrl = import.meta.env.VITE_APP_BACKENDAPPROVAL; // Example URL
+
+    // Send POST request to the backend API
+    const response = await axios.post(apiUrl, { transactionID });
+
+    // Handle the response (e.g., log the success message, update UI)
+    console.log(response.data.message); // Success message
+    console.log('Updated Product:', response.data.product); // Updated product information
+
+  } catch (error) {
+    // Handle any errors that occur during the API request
+    console.error('Error:', error.response ? error.response.data.message : error.message);
+  }
+};
+
   const handleApprove = (transactionId) => {
     console.log(`Approved transaction: ${transactionId}`);
     // Add your approval logic here
+    approveTransaction(transactionId);
+    Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Approved Success !",
+            showConfirmButton: false,
+            iconColor: "#4BB543",
+            timer: 2000,
+          }).then(() => {
+            // Refresh the page after the Swal closes
+            window.location.reload();
+        });
   };
 
   const handleDecline = (transactionId) => {
