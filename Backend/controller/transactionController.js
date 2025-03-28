@@ -362,6 +362,10 @@ router.post('/savetransactionGWQ', async (req, res) => {
       transactionStatus = 'Completed';
     }
 
+    if (paymentType === "Full Payment") {
+      transactionStatus = 'Completed';
+    } 
+
     // Create the transaction object
     const transaction = new Transaction({
       transactionID: transactionID,
