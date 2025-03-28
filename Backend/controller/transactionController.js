@@ -384,7 +384,7 @@ router.post('/savetransactionGWQ', async (req, res) => {
       branch: customer.branch,
       status: transactionStatus,
       commission: commission,
-      headAdminApproval: false,
+      headAdminApproval: null,
       penalty: null
     });
 
@@ -402,7 +402,7 @@ router.post('/savetransactionGWQ', async (req, res) => {
 router.get('/gettransactions', async (req, res) => {
   try {
     // Retrieve all transactions from the database
-    const transactions = await Transaction.find({ headAdminApproval: false });
+    const transactions = await Transaction.find({ headAdminApproval: null });
 
     // If no transactions are found, return a 404 error
     if (!transactions || transactions.length === 0) {
@@ -416,6 +416,26 @@ router.get('/gettransactions', async (req, res) => {
     return res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 });
+
+// GET route to retrieve all transactions
+router.get('/gettransactionsall', async (req, res) => {
+  try {
+    // Retrieve all transactions from the database
+    const transactions = await Transaction.find();
+
+    // If no transactions are found, return a 404 error
+    if (!transactions || transactions.length === 0) {
+      return res.status(404).json({ message: 'No transactions found' });
+    }
+
+    // Return the list of transactions
+    return res.status(200).json({ message: 'Transactions retrieved successfully', transactions });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+});
+
 
 
 // // A separate function to reduce the stock of a product variant

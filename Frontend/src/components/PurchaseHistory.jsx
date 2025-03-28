@@ -1,195 +1,276 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { CheckCircle, XCircle, Search, CircleAlert } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Search, Calendar, DollarSign, User } from 'lucide-react';
+import Swal from "sweetalert2";
 
-const PurchaseHistory = () => {
-  const [purchases, setPurchases] = useState([]);
+// Example transactions data (you would fetch this from your API)
+const transactions = [
+  {
+    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
+    customerName: "Kesari",
+    customerNIC: "112233445V",
+    product: {
+      productID: "67e5057febfcab56e22f22f9",
+      productName: "JL 100 Headset",
+      productQuantity: 1
+    },
+    executive: {
+      executiveName: "Yeppy",
+      executiveNIC: "987654321V"
+    },
+    paymentMethod: "Easy Payment",
+    branch: "Katana",
+    status: "Completed",
+    headAdminApproval: false,
+    createdAt: "2025-03-28T05:26:25.084Z"
+  },
+  {
+    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
+    customerName: "Kesari",
+    customerNIC: "112233445V",
+    product: {
+      productID: "67e5057febfcab56e22f22f9",
+      productName: "JL 100 Headset",
+      productQuantity: 1
+    },
+    executive: {
+      executiveName: "Yeppy",
+      executiveNIC: "987654321V"
+    },
+    paymentMethod: "Easy Payment",
+    branch: "Katana",
+    status: "Completed",
+    headAdminApproval: false,
+    createdAt: "2025-03-28T05:26:25.084Z"
+  },
+  {
+    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
+    customerName: "Kesari",
+    customerNIC: "112233445V",
+    product: {
+      productID: "67e5057febfcab56e22f22f9",
+      productName: "JL 100 Headset",
+      productQuantity: 1
+    },
+    executive: {
+      executiveName: "Yeppy",
+      executiveNIC: "987654321V"
+    },
+    paymentMethod: "Easy Payment",
+    branch: "Katana",
+    status: "Completed",
+    headAdminApproval: false,
+    createdAt: "2025-03-28T05:26:25.084Z"
+  },
+  {
+    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
+    customerName: "Kesari",
+    customerNIC: "112233445V",
+    product: {
+      productID: "67e5057febfcab56e22f22f9",
+      productName: "JL 100 Headset",
+      productQuantity: 1
+    },
+    executive: {
+      executiveName: "Yeppy",
+      executiveNIC: "987654321V"
+    },
+    paymentMethod: "Easy Payment",
+    branch: "Katana",
+    status: "Completed",
+    headAdminApproval: false,
+    createdAt: "2025-03-28T05:26:25.084Z"
+  },
+  {
+    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
+    customerName: "Kesari",
+    customerNIC: "112233445V",
+    product: {
+      productID: "67e5057febfcab56e22f22f9",
+      productName: "JL 100 Headset",
+      productQuantity: 1
+    },
+    executive: {
+      executiveName: "Yeppy",
+      executiveNIC: "987654321V"
+    },
+    paymentMethod: "Easy Payment",
+    branch: "Katana",
+    status: "Completed",
+    headAdminApproval: false,
+    createdAt: "2025-03-28T05:26:25.084Z"
+  },
+
+
+
+
+  // Add more sample data here if needed
+];
+
+function PurcheseHistory() {
+
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPurchase, setSelectedPurchase] = useState(null);
 
-  // Fetching the purchases from the backend
   useEffect(() => {
-    const fetchPurchases = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/api/gettransactions'); // Replace with actual URL
-        const transactions = response.data.transactions;
-        
-        // Mapping backend data to frontend format
-        const formattedPurchases = transactions.map((transaction) => ({
-          id: transaction.transactionID,  // Mapping transactionID as the frontend 'id'
-          customer: transaction.customerName,
-          cNic: transaction.customerNIC,
-          eNic: transaction.executive.executiveNIC,
-          eCommission: "Rs.2000",  // This can be calculated or fetched if needed
-          product: transaction.product.productName,
-          date: new Date(transaction.createdAt).toLocaleDateString(), // Convert to readable date format
-          amount: transaction.easyPayment.payments.reduce((sum, payment) => sum + payment.amount, 0), // Sum of all payments
-          status: transaction.status,
-          paymentType: transaction.paymentMethod,
-          installments: transaction.easyPayment.payments.length > 0 ? {
-            total: transaction.easyPayment.payments.length,
-            paid: transaction.easyPayment.payments.filter(payment => payment.status === 'paid').length,
-            monthlyAmount: transaction.easyPayment.payments[0]?.amount || 0,
-            nextPayment: transaction.easyPayment.payments[transaction.easyPayment.payments.length - 1]?.dueDate,
-            payments: transaction.easyPayment.payments
-          } : null,
-        }));
-
-        setPurchases(formattedPurchases);
+    // Fetch transactions from the backend
+    const apiUrl = import.meta.env.VITE_APP_BACKENDGETATRS;
+    axios
+      .get(apiUrl) // Replace with your backend URL
+      .then((response) => {
+        setTransactions(response.data.transactions); // Set transactions in state
+        setLoading(false); // Stop loading
+        console.log(transactions)
+      })
+      .catch((error) => {
+        console.error('Error fetching transactions:', error);
         setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchPurchases();
+      });
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Purchase History</h2>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex gap-4 mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {/* Header */}
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">Transactions</h2>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Search purchases..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Search transactions..."
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
                 />
               </div>
-              <select className="border border-gray-300 rounded-lg px-4 py-2">
-                <option>All Status</option>
-                <option>Completed</option>
-                <option>In Progress</option>
-              </select>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer NIC</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Executive NIC</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Executive Commission</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {purchases.map((purchase) => (
-                    <tr 
-                      key={purchase.id}
-                      className={`hover:bg-gray-50 cursor-pointer ${selectedPurchase === purchase.id ? 'bg-blue-50' : ''}`}
-                      onClick={() => setSelectedPurchase(purchase.id)}
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap">{purchase.customer}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{purchase.cNic}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{purchase.eNic}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{purchase.eCommission}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{purchase.product}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{purchase.date}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">${purchase.amount}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{purchase.paymentType}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            purchase.status === 'Completed'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                          }`}
-                        >
-                          {purchase.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="text-blue-600 hover:text-blue-800">View Details</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </div>
-        </div>
 
-        <div className="lg:col-span-1">
-          {selectedPurchase && (
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-4">Payment Details</h3>
-              {purchases.find(p => p.id === selectedPurchase)?.installments ? (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                    <div>
-                      <p className="text-sm text-gray-600">Next Payment</p>
-                      <p className="text-lg font-semibold text-blue-600">
-                        ${purchases.find(p => p.id === selectedPurchase)?.installments?.monthlyAmount}
-                      </p>
-                    </div>
-                    <Calendar className="text-blue-600 w-6 h-6" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-600">Installments Paid</p>
-                      <p className="text-lg font-semibold">
-                        {purchases.find(p => p.id === selectedPurchase)?.installments?.paid} of {purchases.find(p => p.id === selectedPurchase)?.installments?.total}
-                      </p>
-                    </div>
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-600">Next Due Date</p>
-                      <p className="text-lg font-semibold">
-                        {purchases.find(p => p.id === selectedPurchase)?.installments?.nextPayment}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h4 className="font-medium">Payment Schedule</h4>
-                    {purchases.find(p => p.id === selectedPurchase)?.installments?.payments.map((payment, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <p className="text-sm font-medium">{payment.date}</p>
-                          <p className="text-sm text-gray-600">${payment.amount}</p>
-                        </div>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            payment.status === 'Paid'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                          }`}
-                        >
-                          {payment.status}
-                        </span>
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer NIC</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Executive</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Method</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Admin Approval</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {transactions.map((transaction) => (
+                  <tr key={transaction.transactionID} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {transaction.transactionID.slice(0, 8)}...
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{transaction.customerName}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {transaction.customerNIC}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{transaction.product.productName}</div>
+                      <div className="text-sm text-gray-500">Qty: {transaction.product.productQuantity}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{transaction.executive.executiveName}</div>
+                      <div className="text-sm text-gray-500">{transaction.executive.executiveNIC}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {transaction.branch}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {transaction.paymentMethod}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                        ${transaction.status === 'Completed'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'}`}>
+                        {transaction.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className={`flex items-center space-x-2 ${transaction.headAdminApproval || transaction.headAdminApproval === false ? (transaction.headAdminApproval ? 'text-green-600' : 'text-red-600') : 'text-yellow-600'}`}>
+                        {transaction.headAdminApproval === null ? (
+                          <>
+                           <CircleAlert  className="w-5 h-5" />
+                          <span className="text-sm font-medium">Processing</span>
+                          
+                          </>
+                          
+                        ) : transaction.headAdminApproval ? (
+                          <>
+                            <CheckCircle className="w-5 h-5" />
+                            <span className="text-sm font-medium">Approved</span>
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="w-5 h-5" />
+                            <span className="text-sm font-medium">Declined</span>
+                          </>
+                        )}
                       </div>
-                    ))}
-                  </div>
+
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1 flex justify-between sm:hidden">
+                <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                  Previous
+                </button>
+                <button className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                  Next
+                </button>
+              </div>
+              <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm text-gray-700">
+                    Showing <span className="font-medium">1</span> to <span className="font-medium">10</span> of{' '}
+                    <span className="font-medium">20</span> results
+                  </p>
                 </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <DollarSign className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p>Full payment completed</p>
+                <div>
+                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <button className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                      Previous
+                    </button>
+                    <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                      1
+                    </button>
+                    <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                      2
+                    </button>
+                    <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                      3
+                    </button>
+                    <button className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                      Next
+                    </button>
+                  </nav>
                 </div>
-              )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default PurchaseHistory;
+export default PurcheseHistory;
