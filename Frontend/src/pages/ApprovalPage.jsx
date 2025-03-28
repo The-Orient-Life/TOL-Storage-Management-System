@@ -283,6 +283,17 @@ const approveTransaction = async (transactionID) => {
   const handleDecline = (transactionId) => {
     console.log(`Declined transaction: ${transactionId}`);
     // Add your decline logic here
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Approved Declined !",
+      showConfirmButton: false,
+      iconColor: "#F72C5B",
+      timer: 2000,
+    }).then(() => {
+      // Refresh the page after the Swal closes
+      window.location.reload();
+  });
   };
 
   const toggleExpand = (transactionId) => {

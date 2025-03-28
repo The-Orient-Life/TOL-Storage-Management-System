@@ -60,7 +60,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       dropdown: [
         { name: "Search Customer", link: "/customer" },
         { name: "New User", link: "/adduser" },
-        { name: "Customer List", link: "/customerlist" }
+        // { name: "Customer List", link: "/customerlist" }
       ],
     },
     {
