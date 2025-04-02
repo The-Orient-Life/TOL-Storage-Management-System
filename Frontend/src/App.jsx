@@ -14,6 +14,8 @@ import UserRegister from "./pages/UserRegister";
 import LoginPage from "./pages/LoginPage"; 
 import Dashboard from "./pages/Dashboard";
 import Approval from "./pages/ApprovalPage";
+import PaymentUpdate from "./pages/PaymentUpdate";
+import TransactionList from "./components/TransactionList";
 
 function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(true); // Sidebar open by default
@@ -44,6 +46,8 @@ function App() {
           <Route exact path="/adduser" element={<UserRegister />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/approval" element={<Approval/>} />
+          <Route exact path="/payment" element={<PaymentUpdate/>} />
+          <Route exact path="/payback" element={<TransactionList/>} />
         </Routes>
       </div>
     </div>
