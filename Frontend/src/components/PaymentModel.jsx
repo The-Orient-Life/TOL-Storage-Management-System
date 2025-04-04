@@ -14,7 +14,7 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
 
     const amount = parseFloat(paymentAmount);
     const update = {
-      paymentId: payment._id.$oid,
+      paymentId: payment._id,
       amount,
       dueAmount: payment.dueAmount - amount,
       status: amount >= payment.dueAmount ? 'paid' : 'pending',
@@ -24,7 +24,7 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
     };
 
     console.log('Payment Details:', {
-      monthId: payment._id.$oid,
+      monthId: payment._id,
       paidAmount: amount,
       dueAmount: payment.dueAmount - amount,
       month: payment.easyPaymentMonth,
@@ -94,9 +94,9 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
           <div className="grid grid-cols-1 gap-4">
             {sortedPayments.map((payment) => (
               <div
-                key={payment._id.$oid}
+                key={payment._id}
                 className={`border p-4 rounded-lg transition-all ${
-                  selectedPayment?._id.$oid === payment._id.$oid
+                  selectedPayment?._id === payment._id
                     ? 'border-blue-500 shadow-md'
                     : 'hover:border-gray-300'
                 }`}
@@ -130,7 +130,7 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
                   </div>
                 </div>
 
-                {selectedPayment?._id.$oid === payment._id.$oid && (
+                {selectedPayment?._id === payment._id && (
                   <div className="mt-4 space-y-4 border-t pt-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>

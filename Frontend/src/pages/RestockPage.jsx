@@ -50,7 +50,7 @@ function Restock() {
     if (selectedVariant && restockAmount > 0) {
       // Log the restock details
       console.log({
-        variantId: selectedVariant._id.$oid,
+        variantId: selectedVariant._id,
         variantName: selectedVariant.name,
         currentStock: selectedVariant.stock,
         restockAmount: restockAmount,
