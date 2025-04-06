@@ -5,25 +5,25 @@ const Product = require("../models/Product.js")
 
 // Define routes in productController
 router.get('/getProduct', async (req, res) => {
-    
-    try{
-        
-        const getProduct = await Product.find();
-        res.status(200).json({message: "Product Fetched Successfully" , getProduct})
-        console.log("Product Fetched Successfully Completed !")
-    }catch(error){
 
-        res.status(500).json({message: "Error Fetching Product" , error: error.message})
+    try {
+
+        const getProduct = await Product.find();
+        res.status(200).json({ message: "Product Fetched Successfully", getProduct })
+        console.log("Product Fetched Successfully Completed !")
+    } catch (error) {
+
+        res.status(500).json({ message: "Error Fetching Product", error: error.message })
         console.log("Product Fetched Unsuccessfully !")
 
     }
-    
+
 
 
 });
 
 router.post('/addProduct', async (req, res) => {
-    
+
     const { productName, productCategory, productVariants, productTotalWorth, productStockStatus, imagePreview } = req.body;
 
     // Validation for variants (checking if name, stock, and price are provided)
@@ -33,8 +33,8 @@ router.post('/addProduct', async (req, res) => {
 
     const newProduct = new Product({
         productName,
-        productCategory, 
-        productVariants,  
+        productCategory,
+        productVariants,
         productTotalWorth,
         productStockStatus,
         imagePreview  // Include image preview
@@ -148,39 +148,75 @@ router.get('/getM', async (req, res) => {
 
 
 router.patch("/reduceQ", async (req, res) => {
-  try {
-    const { variantId } = req.body;  // Extract variantId from the request body
-    
-    // Find the product that contains the variant with the given variantId
-    const product = await Product.findOne({ "productVariants._id": variantId });
+    try {
+        const { variantId } = req.body;  // Extract variantId from the request body
 
-    if (!product) {
-      return res.status(404).json({ message: "Product with the specified variant not found" });
+        // Find the product that contains the variant with the given variantId
+        const product = await Product.findOne({ "productVariants._id": variantId });
+
+        if (!product) {
+            return res.status(404).json({ message: "Product with the specified variant not found" });
+        }
+
+        // Find the variant inside the product's productVariants array
+        const variant = product.productVariants.find(v => v._id.toString() === variantId);
+
+        if (!variant) {
+            return res.status(404).json({ message: "Product variant not found" });
+        }
+
+        // Check if the stock is greater than 0 before reducing
+        if (variant.stock <= 0) {
+            return res.status(400).json({ message: "No stock available to reduce" });
+        }
+
+        // Reduce the quantity of the variant by 1
+        variant.stock -= 1;
+
+        // Save the updated product back to the database
+        await product.save();
+
+        return res.status(200).json({ message: "Quantity reduced successfully", updatedProduct: product });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "An error occurred", error: error.message });
     }
+});
 
-    // Find the variant inside the product's productVariants array
-    const variant = product.productVariants.find(v => v._id.toString() === variantId);
+router.patch("/restockVariant", async (req, res) => {
+    try {
+        const { variantId, restockAmount } = req.body;  // Extract variantId and restockAmount from the request body
 
-    if (!variant) {
-      return res.status(404).json({ message: "Product variant not found" });
+        // Find the product that contains the variant with the given variantId
+        const product = await Product.findOne({ "productVariants._id": variantId });
+
+        if (!product) {
+            return res.status(404).json({ message: "Product with the specified variant not found" });
+        }
+
+        // Find the variant inside the product's productVariants array
+        const variant = product.productVariants.find(v => v._id.toString() === variantId);
+
+        if (!variant) {
+            return res.status(404).json({ message: "Product variant not found" });
+        }
+
+        // Ensure the restockAmount is a positive number
+        if (restockAmount <= 0) {
+            return res.status(400).json({ message: "Restock amount must be greater than 0" });
+        }
+
+        // Add the restockAmount to the current stock of the variant
+        variant.stock += restockAmount;
+
+        // Save the updated product back to the database
+        await product.save();
+
+        return res.status(200).json({ message: "Variant restocked successfully", updatedProduct: product });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "An error occurred", error: error.message });
     }
-
-    // Check if the stock is greater than 0 before reducing
-    if (variant.stock <= 0) {
-      return res.status(400).json({ message: "No stock available to reduce" });
-    }
-
-    // Reduce the quantity of the variant by 1
-    variant.stock -= 1;
-
-    // Save the updated product back to the database
-    await product.save();
-
-    return res.status(200).json({ message: "Quantity reduced successfully", updatedProduct: product });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "An error occurred", error: error.message });
-  }
 });
 
 

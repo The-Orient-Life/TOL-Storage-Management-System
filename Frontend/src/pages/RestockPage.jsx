@@ -46,22 +46,79 @@ function Restock() {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
 
+  // const handleRestock = () => {
+  //   if (selectedVariant && restockAmount > 0) {
+  //     // Log the restock details
+  //     console.log({
+  //       variantId: selectedVariant._id,
+  //       variantName: selectedVariant.name,
+  //       currentStock: selectedVariant.stock,
+  //       restockAmount: restockAmount,
+  //       newStockLevel: selectedVariant.stock + restockAmount
+  //     });
+
+  //     setSelectedVariant(null);/////////////////
+  //     /////////////////////////////////////////
+  //     setRestockAmount(0);
+  //   }
+  // };
+
   const handleRestock = () => {
     if (selectedVariant && restockAmount > 0) {
-      // Log the restock details
+      // Log the restock details to the console (optional for debugging)
       console.log({
         variantId: selectedVariant._id,
         variantName: selectedVariant.name,
         currentStock: selectedVariant.stock,
         restockAmount: restockAmount,
-        newStockLevel: selectedVariant.stock + restockAmount
+        newStockLevel: selectedVariant.stock + restockAmount,
       });
-      
-      setSelectedVariant(null);/////////////////
-      /////////////////////////////////////////
-      setRestockAmount(0);
+
+      // Prepare the data to be sent to the backend
+      const restockData = {
+        variantId: selectedVariant._id,
+        restockAmount: restockAmount,
+      };
+
+      const apiUrl = import.meta.env.VITE_APP_BACKENDRESTK;
+
+      // Make the PATCH request to the backend API
+      axios
+        .patch(apiUrl, restockData)
+        .then((response) => {
+          // Show success message using SweetAlert
+          Swal.fire({
+            title: "Success!",
+            text: "Variant restocked successfully.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+
+          // Reset form states after successful restock
+          setSelectedVariant(null);
+          setRestockAmount(0);
+        })
+        .catch((error) => {
+          // Handle error (network error, API error, etc.)
+          console.error("Error during restock:", error);
+          Swal.fire({
+            title: "Error!",
+            text: error.response ? error.response.data.message : "An error occurred",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        });
+    } else {
+      // Handle invalid restock amount (e.g., less than or equal to 0)
+      Swal.fire({
+        title: "Error!",
+        text: "Restock amount must be greater than 0.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
+
 
   // Fetch products from backend using axios
   useEffect(() => {
@@ -135,11 +192,10 @@ function Restock() {
             {product.productVariants.map((variant) => (
               <div
                 key={variant._id.$oid}
-                className={`p-4 rounded-lg border ${
-                  selectedVariant?._id.$oid === variant._id.$oid
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200'
-                } cursor-pointer hover:border-blue-500 transition-colors`}
+                className={`p-4 rounded-lg border ${selectedVariant?._id.$oid === variant._id.$oid
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-gray-200'
+                  } cursor-pointer hover:border-blue-500 transition-colors`}
                 onClick={() => setSelectedVariant(variant)}
               >
                 <div className="flex justify-between items-center">
@@ -197,9 +253,8 @@ function Restock() {
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.productTotalWorth}</td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                  product.productStockStatus === 'in-stock' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
+                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.productStockStatus === 'in-stock' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
                   {product.productStockStatus}
                 </span>
               </td>
