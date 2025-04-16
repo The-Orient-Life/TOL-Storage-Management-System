@@ -74,7 +74,7 @@ const userSchema = new Schema({
   // Role can be 'User' or 'Guarantor'
   role: {
     type: String,
-    enum: ['Customer', 'Executive', 'Branch Manager'],
+    enum: ['Customer', 'Executive', 'Branch Manager','Head Admin'],
     required: true
   },
   // Password field with a custom validation based on the role

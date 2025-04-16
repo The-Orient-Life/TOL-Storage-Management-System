@@ -84,6 +84,7 @@ const transactionSchema = new Schema({
   },
   commotion: { type: String },
   headAdminApproval: { type: Boolean, default: null },
+  headAdminName: { type: String, default: null },
 
   penalty: penaltySchema,
 }, { timestamps: true });

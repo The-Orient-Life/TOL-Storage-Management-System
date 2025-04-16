@@ -17,6 +17,7 @@ import Approval from "./pages/ApprovalPage";
 import PaymentUpdate from "./pages/PaymentUpdate";
 import TransactionList from "./components/TransactionList";
 import Restock from "./pages/RestockPage";
+import Report from "./pages/ReportPage";
 
 function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(true); // Sidebar open by default
@@ -50,6 +51,7 @@ function App() {
           <Route exact path="/payment" element={<PaymentUpdate/>} />
           <Route exact path="/payback" element={<TransactionList/>} />
           <Route exact path="/restock" element={<Restock/>} />
+          <Route exact path="/report" element={<Report/>} />
         </Routes>
       </div>
     </div>

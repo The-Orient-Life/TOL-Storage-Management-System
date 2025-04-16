@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import {
   FaHome,
@@ -29,14 +29,29 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
 
   const OnAddBtnClick = () => {
-     
+
     console.log("Add Button Clicked")
     navigate('/productadd')
 
   }
 
+  const storedUserDetails = sessionStorage.getItem('UserDetails');
+  let userRole = '';
+
+  if (storedUserDetails) {
+    const parsedUserDetails = JSON.parse(storedUserDetails);
+    if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.role) {
+      userRole = parsedUserDetails.data.role;
+      console.log("User Role: ", userRole);
+    }
+  }
+
   const menuItems = [
-    { name: "Dashboard", icon: <FaHome />, link: "/dashboard" },
+    // { name: "Dashboard", icon: <FaHome />, link: "/dashboard" },
+
+    ...(userRole === "Head Admin" 
+      ? [{ name: "Dashboard", icon: <FaHome />, link: "/dashboard" }]
+      : []),
     // { name: "Profile", icon: <FaUser />, link: "/profile" },
     // {
     //   name: "Datastore",
@@ -51,7 +66,10 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       icon: <BiCube />,
       dropdown: [
         { name: "View Product", link: "/productview" },
-        { name: "Returns", link: "/productreturn" },
+        // { name: "Returns", link: "/productreturn" },
+        ...(userRole === "Head Admin" 
+          ? [{ name: "Restock", link: "/restock" }]
+          : []),
       ],
     },
     {
@@ -71,16 +89,19 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
         { name: "Purchase History", link: "/purchasehistory" },
       ],
     },
-    {
-      name: "Reports",
-      icon: <HiOutlineSquare3Stack3D />,
-      dropdown: [
-        { name: "Weekly Sales", link: "/settings/account" },
-        { name: "Monthly Sales", link: "/settings/privacy" },
-      ],
-    },
-    
+    // {
+    //   name: "Reports",
+    //   icon: <HiOutlineSquare3Stack3D />,
+    //   dropdown: [
+    //     { name: "Weekly Sales", link: "/settings/account" },
+    //     { name: "Monthly Sales", link: "/settings/privacy" },
+    //   ],
+    // },
+    ...(userRole === "Head Admin" 
+      ? [{ name: "Reports", icon:  <HiOutlineSquare3Stack3D />, link: "/report" }]
+      : [])
   ];
+
 
   return (
     <div>
@@ -118,7 +139,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
             <button
               type="button"
               className="flex items-center gap-2 bg-blue-500 text-white font-medium rounded-full px-5 py-2 shadow-lg hover:bg-blue-600 transition"
-             onClick={OnAddBtnClick}>
+              onClick={OnAddBtnClick}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -141,9 +162,8 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } bg-white border-r border-gray-200 dark:bg-white shadow-2xl `}
+        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } bg-white border-r border-gray-200 dark:bg-white shadow-2xl `}
         aria-label="Sidebar"
       >
         <div className="h-full px-3 pb-4 overflow-y-auto">

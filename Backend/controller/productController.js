@@ -219,6 +219,43 @@ router.patch("/restockVariant", async (req, res) => {
     }
 });
 
+router.get("/lowStockVariantCount", async (req, res) => {
+    try {
+        const products = await Product.find({}, 'productVariants');
+
+        let lowStockCount = 0;
+
+        products.forEach(product => {
+            const count = product.productVariants.filter(variant => variant.stock <= 5).length;
+            lowStockCount += count;
+        });
+
+        return res.status(200).json({ lowStockVariantCount: lowStockCount });
+    } catch (error) {
+        console.error("Error counting low stock variants:", error);
+        return res.status(500).json({ message: "Server Error", error: error.message });
+    }
+});
+
+router.get("/outOfStockVariantCount", async (req, res) => {
+    try {
+        const products = await Product.find({}, 'productVariants');
+
+        let outOfStockCount = 0;
+
+        products.forEach(product => {
+            const count = product.productVariants.filter(variant => variant.stock === 0).length;
+            outOfStockCount += count;
+        });
+
+        return res.status(200).json({ outOfStockVariantCount: outOfStockCount });
+    } catch (error) {
+        console.error("Error counting out-of-stock variants:", error);
+        return res.status(500).json({ message: "Server Error", error: error.message });
+    }
+});
+
+
 
 
 

@@ -157,7 +157,7 @@ function Approval() {
   const [expandedRow, setExpandedRow] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     // Fetch transactions from the backend
     const apiUrl = import.meta.env.VITE_APP_BACKENDGETTRS;
@@ -174,110 +174,122 @@ function Approval() {
   }, []);
 
   // Sample transactions array with multiple entries
-//   const transactions = Array(10).fill().map((_, index) => ({
-//     "_id": { "$oid": `67e51f9094869bf16116ca2${index}` },
-//     "transactionID": `e2360f12-a096-4e3d-8a14-adc09b4864${index}f`,
-//     "customerName": `Customer ${index + 1}`,
-//     "customerNIC": "123456789V",
-//     "product": {
-//       "productID": "67e5057febfcab56e22f22f7",
-//       "productName": "HG 21 Headset",
-//       "productQuantity": 1
-//     },
-//     "executive": {
-//       "executiveName": "Kesari",
-//       "executiveNIC": "112233445V",
-//       "_id": { "$oid": "67e51f9094869bf16116ca22" }
-//     },
-//     "guarantors": [
-//       {
-//         "guarantorName": "Guarantor 1",
-//         "guarantorNIC": "987654321V",
-//         "_id": { "$oid": "67d15103b7d6897c350c9400" }
-//       },
-//       {
-//         "guarantorName": "Guarantor 2",
-//         "guarantorNIC": "89765231",
-//         "_id": { "$oid": "67d15103b7d6897c350c9401" }
-//       }
-//     ],
-//     "easyPayment": {
-//       "payments": [
-//         {
-//           "amount": 66.67,
-//           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
-//           "dueAmount": 200,
-//           "dueDate": { "$date": "2025-04-27T09:51:12.898Z" },
-//           "easyPaymentMonth": 1,
-//           "easyPaymentYear": 2025,
-//           "status": "pending",
-//           "_id": { "$oid": `67e51f9094869bf16116ca${index}5` }
-//         },
-//         {
-//           "amount": 66.67,
-//           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
-//           "dueAmount": 133.33,
-//           "dueDate": { "$date": "2025-05-27T09:51:12.898Z" },
-//           "easyPaymentMonth": 2,
-//           "easyPaymentYear": 2025,
-//           "status": "pending",
-//           "_id": { "$oid": `67e51f9094869bf16116ca${index}6` }
-//         },
-//         {
-//           "amount": 66.67,
-//           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
-//           "dueAmount": 66.67,
-//           "dueDate": { "$date": "2025-06-27T09:51:12.898Z" },
-//           "easyPaymentMonth": 3,
-//           "easyPaymentYear": 2025,
-//           "status": "pending",
-//           "_id": { "$oid": `67e51f9094869bf16116ca${index}7` }
-//         }
-//       ]
-//     },
-//     "paymentMethod": "Full Payment",
-//     "branch": "Katana",
-//     "status": "Pending",
-//     "headAdminApproval": false,
-//     "penalty": null,
-//     "createdAt": { "$date": "2025-03-27T09:51:12.918Z" },
-//     "updatedAt": { "$date": "2025-03-27T09:51:12.918Z" }
-//   }));
+  //   const transactions = Array(10).fill().map((_, index) => ({
+  //     "_id": { "$oid": `67e51f9094869bf16116ca2${index}` },
+  //     "transactionID": `e2360f12-a096-4e3d-8a14-adc09b4864${index}f`,
+  //     "customerName": `Customer ${index + 1}`,
+  //     "customerNIC": "123456789V",
+  //     "product": {
+  //       "productID": "67e5057febfcab56e22f22f7",
+  //       "productName": "HG 21 Headset",
+  //       "productQuantity": 1
+  //     },
+  //     "executive": {
+  //       "executiveName": "Kesari",
+  //       "executiveNIC": "112233445V",
+  //       "_id": { "$oid": "67e51f9094869bf16116ca22" }
+  //     },
+  //     "guarantors": [
+  //       {
+  //         "guarantorName": "Guarantor 1",
+  //         "guarantorNIC": "987654321V",
+  //         "_id": { "$oid": "67d15103b7d6897c350c9400" }
+  //       },
+  //       {
+  //         "guarantorName": "Guarantor 2",
+  //         "guarantorNIC": "89765231",
+  //         "_id": { "$oid": "67d15103b7d6897c350c9401" }
+  //       }
+  //     ],
+  //     "easyPayment": {
+  //       "payments": [
+  //         {
+  //           "amount": 66.67,
+  //           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
+  //           "dueAmount": 200,
+  //           "dueDate": { "$date": "2025-04-27T09:51:12.898Z" },
+  //           "easyPaymentMonth": 1,
+  //           "easyPaymentYear": 2025,
+  //           "status": "pending",
+  //           "_id": { "$oid": `67e51f9094869bf16116ca${index}5` }
+  //         },
+  //         {
+  //           "amount": 66.67,
+  //           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
+  //           "dueAmount": 133.33,
+  //           "dueDate": { "$date": "2025-05-27T09:51:12.898Z" },
+  //           "easyPaymentMonth": 2,
+  //           "easyPaymentYear": 2025,
+  //           "status": "pending",
+  //           "_id": { "$oid": `67e51f9094869bf16116ca${index}6` }
+  //         },
+  //         {
+  //           "amount": 66.67,
+  //           "doneDate": { "$date": "2025-03-27T09:51:12.898Z" },
+  //           "dueAmount": 66.67,
+  //           "dueDate": { "$date": "2025-06-27T09:51:12.898Z" },
+  //           "easyPaymentMonth": 3,
+  //           "easyPaymentYear": 2025,
+  //           "status": "pending",
+  //           "_id": { "$oid": `67e51f9094869bf16116ca${index}7` }
+  //         }
+  //       ]
+  //     },
+  //     "paymentMethod": "Full Payment",
+  //     "branch": "Katana",
+  //     "status": "Pending",
+  //     "headAdminApproval": false,
+  //     "penalty": null,
+  //     "createdAt": { "$date": "2025-03-27T09:51:12.918Z" },
+  //     "updatedAt": { "$date": "2025-03-27T09:51:12.918Z" }
+  //   }));
 
-// Function to send the transactionID to the API
-const approveTransaction = async (transactionID) => {
-  try {
-    // Define the API URL (make sure to replace it with your actual endpoint)
-    const apiUrl = import.meta.env.VITE_APP_BACKENDAPPROVAL; // Example URL
+  // Function to send the transactionID to the API
+  const approveTransaction = async (transactionID) => {
+    const storedUserDetails = sessionStorage.getItem('UserDetails');
+      let userName = '';
 
-    // Send POST request to the backend API
-    const response = await axios.post(apiUrl, { transactionID });
+      if (storedUserDetails) {
+        const parsedUserDetails = JSON.parse(storedUserDetails);
+        if (parsedUserDetails?.data?.userName) {
+          userName = parsedUserDetails.data.userName;
+          console.log("User Name:", userName);
+        }
+      }
+    try {
 
-    // Handle the response (e.g., log the success message, update UI)
-    console.log(response.data.message); // Success message
-    console.log('Updated Product:', response.data.product); // Updated product information
+      
+      // Define the API URL (make sure to replace it with your actual endpoint)
+      const apiUrl = import.meta.env.VITE_APP_BACKENDAPPROVAL; // Example URL
 
-  } catch (error) {
-    // Handle any errors that occur during the API request
-    console.error('Error:', error.response ? error.response.data.message : error.message);
-  }
-};
+      // Send POST request to the backend API
+      const response = await axios.post(apiUrl, { transactionID, AdminName: userName, });
+
+      // Handle the response (e.g., log the success message, update UI)
+      console.log(response.data.message); // Success message
+      console.log('Updated Product:', response.data.product); // Updated product information
+
+    } catch (error) {
+      // Handle any errors that occur during the API request
+      console.error('Error:', error.response ? error.response.data.message : error.message);
+    }
+  };
 
   const handleApprove = (transactionId) => {
     console.log(`Approved transaction: ${transactionId}`);
     // Add your approval logic here
     approveTransaction(transactionId);
     Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Approved Success !",
-            showConfirmButton: false,
-            iconColor: "#4BB543",
-            timer: 2000,
-          }).then(() => {
-            // Refresh the page after the Swal closes
-            window.location.reload();
-        });
+      position: "center",
+      icon: "success",
+      title: "Approved Success !",
+      showConfirmButton: false,
+      iconColor: "#4BB543",
+      timer: 2000,
+    }).then(() => {
+      // Refresh the page after the Swal closes
+      window.location.reload();
+    });
   };
 
   const handleDecline = (transactionId) => {
@@ -293,7 +305,7 @@ const approveTransaction = async (transactionID) => {
     }).then(() => {
       // Refresh the page after the Swal closes
       window.location.reload();
-  });
+    });
   };
 
   const toggleExpand = (transactionId) => {

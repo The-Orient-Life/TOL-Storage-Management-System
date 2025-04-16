@@ -6,6 +6,7 @@ const User = require("../models/User.js");
 const Product = require("../models/Product.js");
 
 const { v4: uuidv4 } = require('uuid'); // To generate unique transaction IDs
+const ExcelJS = require('exceljs');
 
 router.post('/savetransaction', async (req, res) => {
     try {
@@ -484,7 +485,7 @@ const reduceVariantStock = async (variantId) => {
 
 // API route to handle updating head admin approval and reduce product stock
 router.post('/transactionsBN', async (req, res) => {
-  const { transactionID } = req.body;  // Assuming the transaction ID is sent in the request body
+  const { transactionID, AdminName } = req.body;  // Assuming the transaction ID is sent in the request body
 
   try {
     // Find the transaction using the provided transaction ID
@@ -496,6 +497,8 @@ router.post('/transactionsBN', async (req, res) => {
 
     // Update the headAdminApproval field to true
     transaction.headAdminApproval = true;
+    console.log("head admin Name : ", AdminName);
+    transaction.headAdminName = AdminName;
 
     // Save the updated transaction
     await transaction.save();
@@ -516,6 +519,831 @@ router.post('/transactionsBN', async (req, res) => {
 });
 
 
+// API route to handle finding payment by payment ID
+router.post('/findpayment', async (req, res) => {
+  try {
+    const { paymentId } = req.body;  // Extract paymentId from request body
+
+    if (!paymentId) {
+      return res.status(400).json({ message: "Payment ID is required" });
+    }
+
+    // Find the transaction document where the payment ID exists within the easyPayment array
+    const transaction = await Transaction.findOne({
+      "easyPayment.payments._id": paymentId  // Match paymentId in the payments array
+    });
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction with the provided payment ID not found" });
+    }
+
+    // Find the specific payment that matches the paymentId
+    const payment = transaction.easyPayment.payments.find(payment => payment._id.toString() === paymentId);
+
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found for the given payment ID" });
+    }
+
+    // Return only the payment details
+    res.status(200).json(payment);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// API route to find payment details and show the full payments array
+router.get('/findpaymentdetails/:paymentId', async (req, res) => {
+  try {
+    const { paymentId } = req.params;  // Extract payment ID from the URL parameter
+
+    // Find the transaction where the paymentId is in the 'payments' array
+    const transaction = await Transaction.findOne({
+      "easyPayment.payments._id": paymentId
+    });
+
+    // Check if transaction is found
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Return the entire payments array
+    return res.status(200).json(transaction.easyPayment.payments);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
   
+
+// Assuming you're using Express.js for your API
+
+// Route to handle payment processing
+router.post('/processpayment', async (req, res) => {
+  try {
+    const { paymentId, paymentAmount } = req.body;  // Extract payment ID and amount from the request
+
+    // Find the transaction containing the given paymentId
+    const transaction = await Transaction.findOne({
+      "easyPayment.payments._id": paymentId
+    });
+
+    // Check if the transaction exists
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Locate the payment in the payments array by paymentId
+    const payment = transaction.easyPayment.payments.find(p => p._id.toString() === paymentId);
+    
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
+    }
+
+    let remainingPayment = paymentAmount;  // Start with the payment amount
+    let updatedPayments = [];
+
+    // Process payments month by month
+    for (let i = 0; i < transaction.easyPayment.payments.length; i++) {
+      const currentPayment = transaction.easyPayment.payments[i];
+
+      if (remainingPayment > 0) {
+        if (currentPayment.dueAmount > 0) {
+          // If the customer has enough to pay for this month
+          if (remainingPayment >= currentPayment.dueAmount) {
+            // Overpay or exact pay the full dueAmount
+            remainingPayment -= currentPayment.dueAmount;
+            currentPayment.dueAmount = 0;
+            currentPayment.status = "paid";  // Mark this month as paid
+          } else {
+            // Partial payment (not enough to cover the full dueAmount)
+            currentPayment.dueAmount -= remainingPayment;
+            remainingPayment = 0;
+            currentPayment.status = "pending";
+           // currentPayment.status = "paid";  // Month still pending
+          }
+        }
+      }
+
+      updatedPayments.push(currentPayment);
+    }
+
+    // Update the transaction's payments and due amount
+    transaction.easyPayment.payments = updatedPayments;
+
+    // Calculate the new remaining due amount for the transaction
+    const newDuePayment = transaction.easyPayment.payments.reduce((total, payment) => total + payment.dueAmount, 0);
+
+    transaction.duePayment = newDuePayment;
+    //transaction.status = "paid"
+
+    // Save the updated transaction to the database
+    await transaction.save();
+
+    return res.status(200).json({
+      message: "Payment processed successfully",
+      updatedTransaction: transaction
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+// Route to handle payment processing
+router.post('/processpaymentWWW', async (req, res) => {
+  try {
+    const { paymentId, paymentAmount } = req.body;  // Extract payment ID and amount from the request
+
+    // Find the transaction containing the given paymentId
+    const transaction = await Transaction.findOne({
+      "easyPayment.payments._id": paymentId
+    });
+
+    // Check if the transaction exists
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Locate the payment in the payments array by paymentId
+    const payment = transaction.easyPayment.payments.find(p => p._id.toString() === paymentId);
+    
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
+    }
+
+    let remainingPayment = paymentAmount;  // Start with the payment amount
+    let updatedPayments = [];
+
+    // Process payments month by month
+    for (let i = 0; i < transaction.easyPayment.payments.length; i++) {
+      const currentPayment = transaction.easyPayment.payments[i];
+
+      if (remainingPayment > 0) {
+        if (currentPayment.amount > 0) {
+          // If the customer has enough to pay for this month
+          if (remainingPayment >= currentPayment.amount) {
+            // Overpay or exact pay the full amount
+            remainingPayment -= currentPayment.amount;
+            currentPayment.amount = 0;
+            currentPayment.status = "paid";  // Mark this month as paid
+          } else {
+            // Partial payment (not enough to cover the full amount)
+            currentPayment.amount -= remainingPayment;
+            remainingPayment = 0;
+            currentPayment.status = "pending";  // Month still pending
+          }
+        }
+      }
+
+      updatedPayments.push(currentPayment);
+    }
+
+    // Update the transaction's payments and amount remaining
+    transaction.easyPayment.payments = updatedPayments;
+
+    // Calculate the new remaining amount for the transaction
+    const newRemainingAmount = transaction.easyPayment.payments.reduce((total, payment) => total + payment.amount, 0);
+    transaction.remainingAmount = newRemainingAmount;
+
+    // If no amount is remaining, mark the transaction as paid
+    if (newRemainingAmount === 0) {
+      transaction.status = "paid";
+    } else {
+      transaction.status = "Pending";
+    }
+
+    // Save the updated transaction to the database
+    await transaction.save();
+
+    return res.status(200).json({
+      message: "Payment processed successfully",
+      updatedTransaction: transaction
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+// Route to handle payment processing
+router.post('/processpaymentTTTQW', async (req, res) => {
+  try {
+    const { paymentId, paymentAmount } = req.body;  // Extract payment ID and amount from the request
+
+    // Find the transaction containing the given paymentId
+    const transaction = await Transaction.findOne({
+      "easyPayment.payments._id": paymentId
+    });
+
+    // Check if the transaction exists
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Locate the payment in the payments array by paymentId
+    const payment = transaction.easyPayment.payments.find(p => p._id.toString() === paymentId);
+    
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
+    }
+
+    let remainingPayment = paymentAmount;  // Start with the payment amount
+    let updatedPayments = [];
+    let overpaidAmount = 0; // Variable to track overpayment
+
+    // Process payments month by month
+    for (let i = 0; i < transaction.easyPayment.payments.length; i++) {
+      const currentPayment = transaction.easyPayment.payments[i];
+
+      if (remainingPayment > 0 || overpaidAmount > 0) {
+        let paymentForMonth = currentPayment.amount + overpaidAmount; // Add overpaid amount from previous month
+
+        if (paymentForMonth >= remainingPayment) {
+          // If the customer has enough to pay for this month (considering overpayment)
+          currentPayment.amount = 0;
+          currentPayment.status = "paid";  // Mark this month as paid
+          remainingPayment -= paymentForMonth; // Reduce the remaining payment
+
+          // If there's any leftover payment, it becomes the overpayment for the next month
+          overpaidAmount = remainingPayment < 0 ? Math.abs(remainingPayment) : 0;
+        } else {
+          // If the payment for this month is not enough to cover the full amount
+          currentPayment.amount -= paymentForMonth; // Reduce the current month's due amount
+          remainingPayment = 0; // All payment for this month is done
+          currentPayment.status = "pending"; // Month still pending
+          overpaidAmount = 0; // No more overpayment for next months
+        }
+      }
+
+      updatedPayments.push(currentPayment);
+    }
+
+    // Update the transaction's payments and amount remaining
+    transaction.easyPayment.payments = updatedPayments;
+
+    // Calculate the new remaining amount for the transaction
+    const newRemainingAmount = transaction.easyPayment.payments.reduce((total, payment) => total + payment.amount, 0);
+    transaction.remainingAmount = newRemainingAmount;
+
+    // If no amount is remaining, mark the transaction as paid
+    if (newRemainingAmount === 0) {
+      transaction.status = "paid";
+    } else {
+      transaction.status = "Pending";
+    }
+
+    // Save the updated transaction to the database
+    await transaction.save();
+
+    return res.status(200).json({
+      message: "Payment processed successfully",
+      updatedTransaction: transaction
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// Route to handle payment processing
+router.post('/processpaymentXMXM', async (req, res) => {
+ 
+});
+
+
+/////////////////////////////
+
+router.post('/processpaymentFINAL', async (req, res) => {
+  try {
+    const { paymentId, paymentAmount } = req.body;  // Extract payment ID and amount from the request
+
+    // Find the transaction containing the given paymentId
+    const transaction = await Transaction.findOne({
+      "easyPayment.payments._id": paymentId
+    });
+
+    // Check if the transaction exists
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Locate the payment in the payments array by paymentId
+    const payment = transaction.easyPayment.payments.find(p => p._id.toString() === paymentId);
+    
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
+    }
+
+    // Deduct the paymentAmount from the current payment's dueAmount
+    let remainingPayment = payment.amount - paymentAmount;
+
+    // If remaining amount is less than or equal to 0, mark the payment as paid
+    if (remainingPayment <= 0) {
+      payment.amount = 0;
+      payment.status = "paid";
+    } else {
+      // Otherwise, update the due amount to the remaining payment
+      payment.amount = remainingPayment;
+      payment.status = "pending";
+    }
+
+    // Save the updated transaction to the database
+    await transaction.save();
+
+    return res.status(200).json({
+      message: "Payment processed successfully",
+      updatedTransaction: transaction
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+/////////////////////////////////////////
+
+router.post('/processpaymentLastFinal', async (req, res) => {
+  try {
+    const { paymentId, paymentAmount } = req.body;  // Extract payment ID and amount from the request
+
+    // Find the transaction containing the given paymentId
+    const transaction = await Transaction.findOne({
+      "easyPayment.payments._id": paymentId
+    });
+
+    // Check if the transaction exists
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Locate the payment in the payments array by paymentId
+    const payment = transaction.easyPayment.payments.find(p => p._id.toString() === paymentId);
+    
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
+    }
+
+    // Deduct the paymentAmount from the current payment's dueAmount
+    let remainingPayment = payment.amount - paymentAmount;
+
+    // If remaining amount is less than or equal to 0, mark the payment as paid
+    if (remainingPayment <= 0) {
+      payment.amount = 0;
+      payment.status = "paid";
+    } else {
+      // Otherwise, update the due amount to the remaining payment
+      payment.amount = remainingPayment;
+      payment.status = "pending";
+    }
+
+    // Check if all payments are fully paid
+    const allPaymentsPaid = transaction.easyPayment.payments.every(p => p.amount === 0 && p.status === "paid");
+
+    // If all payments are paid, update the transaction status to "Completed"
+    if (allPaymentsPaid) {
+      transaction.status = "Completed";
+    }
+
+    // Save the updated transaction to the database
+    await transaction.save();
+
+    return res.status(200).json({
+      message: "Payment processed successfully",
+      updatedTransaction: transaction
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+router.get('/export-transactions', async (req, res) => {
+  try {
+    const transactions = await Transaction.find();
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Transactions');
+
+    // Set headers
+    worksheet.columns = [
+      { header: 'Transaction ID', key: 'transactionID', width: 30 },
+      { header: 'Customer Name', key: 'customerName', width: 25 },
+      { header: 'Customer NIC', key: 'customerNIC', width: 20 },
+      { header: 'Product Name', key: 'productName', width: 25 },
+      { header: 'Product Quantity', key: 'productQuantity', width: 20 },
+      { header: 'Executive Name', key: 'executiveName', width: 25 },
+      { header: 'Branch', key: 'branch', width: 20 },
+      { header: 'Payment Method', key: 'paymentMethod', width: 20 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Created At', key: 'createdAt', width: 25 },
+    ];
+
+    // Add rows
+    transactions.forEach(tx => {
+      worksheet.addRow({
+        transactionID: tx.transactionID,
+        customerName: tx.customerName,
+        customerNIC: tx.customerNIC,
+        productName: tx.product?.productName || '',
+        productQuantity: tx.product?.productQuantity || '',
+        executiveName: tx.executive?.executiveName || '',
+        branch: tx.branch,
+        paymentMethod: tx.paymentMethod,
+        status: tx.status,
+        createdAt: new Date(tx.createdAt).toLocaleString(),
+      });
+
+      // Optional: Add nested payment rows
+      if (tx.easyPayment?.payments?.length) {
+        tx.easyPayment.payments.forEach((p, index) => {
+          worksheet.addRow({
+            transactionID: '',
+            customerName: '',
+            customerNIC: '',
+            productName: index === 0 ? 'Easy Payments:' : '',
+            productQuantity: '',
+            executiveName: '',
+            branch: '',
+            paymentMethod: '',
+            status: '',
+            createdAt: '',
+          });
+
+          worksheet.addRow({
+            transactionID: `→ Month ${p.easyPaymentMonth}/${p.easyPaymentYear}`,
+            customerName: `Due: ${p.dueAmount}`,
+            customerNIC: `Status: ${p.status}`,
+            productName: `Paid on: ${new Date(p.doneDate).toLocaleDateString()}`,
+          });
+        });
+      }
+
+      worksheet.addRow({}); // empty row between transactions
+    });
+
+    // Set response headers
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=transactions.xlsx'
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error('Excel export error:', err);
+    res.status(500).send('Failed to export Excel');
+  }
+});
+
+
+
+router.get('/export-transactionsTest', async (req, res) => {
+  try {
+    const { optionName, selectedPeriod } = req.query;
+
+    // Determine status based on optionName
+    let statusFilter = {};
+    if (optionName === 'Ongoing Payments') {
+      statusFilter.status = 'Pending';
+    } else if (optionName === 'Completed Payments') {
+      statusFilter.status = 'Completed';
+    }
+
+    // Date filtering
+    let dateFilter = {};
+    if (selectedPeriod === 'weekly') {
+      const lastWeek = new Date();
+      lastWeek.setDate(lastWeek.getDate() - 7);
+      dateFilter.createdAt = { $gte: lastWeek };
+    } else if (selectedPeriod === 'monthly') {
+      const lastMonth = new Date();
+      lastMonth.setDate(lastMonth.getDate() - 30);
+      dateFilter.createdAt = { $gte: lastMonth };
+    }
+
+    // Combine filters
+    const filter = { ...statusFilter, ...dateFilter };
+
+    const transactions = await Transaction.find(filter);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Transactions');
+
+    worksheet.columns = [
+      { header: 'Transaction ID', key: 'transactionID', width: 30 },
+      { header: 'Customer Name', key: 'customerName', width: 25 },
+      { header: 'Customer NIC', key: 'customerNIC', width: 20 },
+      { header: 'Product Name', key: 'productName', width: 25 },
+      { header: 'Product Quantity', key: 'productQuantity', width: 20 },
+      { header: 'Executive Name', key: 'executiveName', width: 25 },
+      { header: 'Branch', key: 'branch', width: 20 },
+      { header: 'Payment Method', key: 'paymentMethod', width: 20 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Created At', key: 'createdAt', width: 25 },
+    ];
+
+    transactions.forEach(tx => {
+      worksheet.addRow({
+        transactionID: tx.transactionID,
+        customerName: tx.customerName,
+        customerNIC: tx.customerNIC,
+        productName: tx.product?.productName || '',
+        productQuantity: tx.product?.productQuantity || '',
+        executiveName: tx.executive?.executiveName || '',
+        branch: tx.branch,
+        paymentMethod: tx.paymentMethod,
+        status: tx.status,
+        createdAt: new Date(tx.createdAt).toLocaleString(),
+      });
+
+      // Add nested payment rows
+      if (tx.easyPayment?.payments?.length) {
+        tx.easyPayment.payments.forEach((p, index) => {
+          worksheet.addRow({
+            transactionID: '',
+            customerName: '',
+            customerNIC: '',
+            productName: index === 0 ? 'Easy Payments:' : '',
+            productQuantity: '',
+            executiveName: '',
+            branch: '',
+            paymentMethod: '',
+            status: '',
+            createdAt: '',
+          });
+
+          worksheet.addRow({
+            transactionID: `→ Month ${p.easyPaymentMonth}/${p.easyPaymentYear}`,
+            customerName: `Due: ${p.dueAmount}`,
+            customerNIC: `Status: ${p.status}`,
+            productName: `Paid on: ${new Date(p.doneDate).toLocaleDateString()}`,
+          });
+        });
+      }
+
+      worksheet.addRow({}); // empty row
+    });
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=transactions.xlsx'
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error('Excel export error:', err);
+    res.status(500).send('Failed to export Excel');
+  }
+});
+
+
+
+router.get('/export-products', async (req, res) => {
+  try {
+    const { selectedPeriod } = req.query;
+
+    let dateFilter = {};
+    if (selectedPeriod === 'weekly') {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      dateFilter.createdAt = { $gte: sevenDaysAgo };
+    } else if (selectedPeriod === 'monthly') {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      dateFilter.createdAt = { $gte: thirtyDaysAgo };
+    }
+
+    const products = await Product.find(dateFilter);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Products');
+
+    // Headers
+    worksheet.columns = [
+      { header: 'Product Name', key: 'productName', width: 30 },
+      { header: 'Category', key: 'productCategory', width: 25 },
+      { header: 'Total Worth', key: 'productTotalWorth', width: 20 },
+      { header: 'Stock Status', key: 'productStockStatus', width: 20 },
+      { header: 'Created At', key: 'createdAt', width: 25 },
+    ];
+
+    // Add rows
+    products.forEach(product => {
+      worksheet.addRow({
+        productName: product.productName,
+        productCategory: product.productCategory,
+        productTotalWorth: product.productTotalWorth,
+        productStockStatus: product.productStockStatus,
+        createdAt: new Date(product.createdAt).toLocaleString(),
+      });
+
+      if (product.productVariants?.length) {
+        worksheet.addRow({ productCategory: 'Variants:' });
+        worksheet.addRow({
+          productName: 'Variant Name',
+          productCategory: 'Stock',
+          productTotalWorth: 'Price',
+        });
+
+        product.productVariants.forEach(variant => {
+          worksheet.addRow({
+            productName: `→ ${variant.name}`,
+            productCategory: variant.stock,
+            productTotalWorth: variant.price,
+          });
+        });
+
+        worksheet.addRow({}); // space between products
+      }
+    });
+
+    // Headers
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader('Content-Disposition', 'attachment; filename=products.xlsx');
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error('Excel export error:', err);
+    res.status(500).send('Failed to export Excel');
+  }
+});
+
+// Route to handle payment processing and get the count of transactions with headAdminApproval as null
+router.post('/processpaymentXMXMQQQ', async (req, res) => {
+  try {
+    // Count transactions where headAdminApproval is null
+    const count = await Transaction.countDocuments({ headAdminApproval: null });
+
+    // Send the count as the response
+    res.json({ count });
+  } catch (error) {
+    // Handle any potential errors
+    console.error("Error while counting transactions:", error);
+    res.status(500).json({ error: "An error occurred while fetching the count" });
+  }
+});
+
+
+router.get('/sumeasypayment', async (req, res) => {
+  try {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const transactions = await Transaction.find({
+      paymentMethod: "Easy Payment",
+      createdAt: { $gte: thirtyDaysAgo }
+    });
+
+    let totalDueAmount = 0;
+
+    transactions.forEach(transaction => {
+      const payments = transaction.easyPayment?.payments;
+      if (payments && payments.length > 0) {
+        const firstPayment = payments[0];
+        if (firstPayment && firstPayment.dueAmount > 0) {
+          totalDueAmount += firstPayment.dueAmount;
+        }
+      }
+    });
+
+    return res.status(200).json({ totalFirstPaymentDueAmount: totalDueAmount });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+router.get('/sumfullpayment', async (req, res) => {
+  try {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const transactions = await Transaction.find({
+      paymentMethod: "Full Payment",
+      createdAt: { $gte: thirtyDaysAgo }
+    });
+
+    let totalDueAmount = 0;
+
+    transactions.forEach(transaction => {
+      const payments = transaction.easyPayment?.payments;
+      if (payments && payments.length > 0) {
+        const firstPayment = payments[0];
+        if (firstPayment && firstPayment.dueAmount > 0) {
+          totalDueAmount += firstPayment.dueAmount;
+        }
+      }
+    });
+
+    return res.status(200).json({ totalFirstPaymentDueAmount: totalDueAmount });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
+/////////////////////////////////////////
+
+router.get('/payment-trends', async (req, res) => {
+  try {
+    const now = new Date();
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(now.getMonth() - 5);
+    sixMonthsAgo.setDate(1); // Start of the first month
+
+    const transactions = await Transaction.find({
+      createdAt: { $gte: sixMonthsAgo }
+    });
+
+    // Initialize month buckets
+    const monthMap = {};
+    for (let i = 0; i < 6; i++) {
+      const date = new Date();
+      date.setMonth(now.getMonth() - i);
+      const monthKey = date.toLocaleString('default', { month: 'short' });
+
+      monthMap[monthKey] = {
+        name: monthKey,
+        easyPayment: 0,
+        fullPayment: 0
+      };
+    }
+
+    transactions.forEach(transaction => {
+      const createdAt = new Date(transaction.createdAt);
+      const monthKey = createdAt.toLocaleString('default', { month: 'short' });
+      if (!monthMap[monthKey]) return;
+
+      if (transaction.paymentMethod === "Easy Payment") {
+        const payments = transaction.easyPayment?.payments || [];
+        const totalPaid = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+        monthMap[monthKey].easyPayment += totalPaid;
+      }
+
+      if (transaction.paymentMethod === "Full Payment") {
+        // If the totalAmount is a valid number, add it to fullPayment
+        if (transaction.totalAmount && typeof transaction.totalAmount === 'number') {
+          monthMap[monthKey].fullPayment += transaction.totalAmount;
+        }
+
+        // Add dueAmount from first Easy Payment (if present)
+        const payments = transaction.easyPayment?.payments;
+        const firstPayment = payments?.[0];
+        if (firstPayment?.dueAmount > 0) {
+          monthMap[monthKey].fullPayment += firstPayment.dueAmount;
+        }
+      }
+    });
+
+    // Sort from oldest to newest
+    const sortedData = Object.values(monthMap).reverse();
+    res.status(200).json(sortedData);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
 module.exports = router;

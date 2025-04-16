@@ -81,7 +81,7 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Transaction ID</p>
-              <p className="font-medium font-mono">{transaction.transactionID}</p>
+              <p className="font-medium font-mono">{transaction.transactionID},{sessionStorage.setItem("TID", transaction.transactionID)}</p>
             </div>
           </div>
         </div>

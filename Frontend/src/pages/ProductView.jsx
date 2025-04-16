@@ -205,6 +205,8 @@ function ProductView() {
  
 
   const [product, setProduct] = useState([]); // Initialize state to hold an array of products
+  const [productLS, setProductLS] = useState([]); 
+  const [productOS, setProductOS] = useState([]); 
   const products =product
 
   useEffect(() => {
@@ -212,10 +214,15 @@ function ProductView() {
     const fetchData = async () => {
       
       const apiUrl = import.meta.env.VITE_APP_BACKENDPRODUCT;
+      const apiUrlLS = import.meta.env.VITE_APP_BACKENDPRODUCTLS;
+      const apiUrlOS = import.meta.env.VITE_APP_BACKENDPRODUCTOS;
 
       try {
         const response = await axios.get(apiUrl);
-        
+        const responseLS = await axios.get(apiUrlLS);
+        setProductLS(responseLS.data.lowStockVariantCount);
+        const responseOS = await axios.get(apiUrlOS);
+        setProductOS(responseOS.data.outOfStockVariantCount)
         // Log full response to check its structure
         console.log(response.data);
 
@@ -308,12 +315,14 @@ function ProductView() {
   });
 
   const totalStock = products.reduce((acc, curr) => acc + curr.stock, 0);
-  const lowStockItems = products.filter(
-    (product) => product.status === "Low Stock"
-  ).length;
-  const outOfStockItems = products.filter(
-    (product) => product.status === "Out of Stock"
-  ).length;
+  // const lowStockItems = products.filter(
+  //   (product) => product.status === "Low Stock"
+  // ).length;
+  const lowStockItems = productLS;
+  // const outOfStockItems = products.filter(
+  //   (product) => product.status === "Out of Stock"
+  // ).length;
+  const outOfStockItems = productOS;
 
   const StatCard = ({ title, value, icon, color, textColor }) => (
     <div className="card-gradient rounded-2xl shadow-lg p-6 hover-scale">

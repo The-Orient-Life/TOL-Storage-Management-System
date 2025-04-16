@@ -15,30 +15,50 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent form from submitting the default way
-  
+
     // Get the backend URL from the environment variable
     const regURL = import.meta.env.VITE_APP_BACKENDLOG;
-  
+
     // Check if the URL is correct
     console.log("Backend URL:", regURL);  // Log the backend URL to verify it's correct
-  
+
     if (!regURL) {
       console.error("Backend URL is missing! Please check your .env file.");
       Swal.fire("Error", "Backend URL is not defined", "error");
       return;
     }
-  
+
     try {
       const response = await axios.post(regURL, {
         username: userName,
         password: password,
       });
-  
+
       if (response.data.status === "ok") {
         const token = response.data.token;
         sessionStorage.setItem("authToken", token);
-        Swal.fire("Success", "You have logged in successfully", "success");
-        navigate("/dashboard");
+        
+        
+        const storedUserDetails = sessionStorage.getItem('UserDetails');
+        let userRole = '';
+
+        if (storedUserDetails) {
+          const parsedUserDetails = JSON.parse(storedUserDetails);
+          if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.role) {
+            userRole = parsedUserDetails.data.role;
+            console.log("User Role: ", userRole);
+            if(userRole === "Head Admin"){
+              navigate("/dashboard");
+              //window.location.reload();
+              Swal.fire("Success", "You have logged in successfully", "success");
+            }else{
+              navigate("/productview");
+             // window.location.reload();
+              Swal.fire("Success", "You have logged in successfully", "success");
+            }
+          }
+        }
+        
       } else {
         Swal.fire("Error", response.data.error, "error");
       }
@@ -59,15 +79,15 @@ function Login() {
     if (userDetailsResponse.data) {
       console.log('User details:', userDetailsResponse.data);
       // Handle user details response (e.g., show user info or store it)
-      sessionStorage.setItem("UserDetails",JSON.stringify(userDetailsResponse));
+      sessionStorage.setItem("UserDetails", JSON.stringify(userDetailsResponse));
     } else {
       Swal.fire("Error", "Failed to fetch user details", "error");
     }
 
     console.log(decoded);
-   
+
   };
-  
+
   async () => {
     const token = sessionStorage.getItem("authToken");
     const decoded = jwtDecode(token);
@@ -94,9 +114,9 @@ function Login() {
         {/* Logo Section */}
         <div className="flex justify-center mb-8">
           <div className="rounded-full border-4 border-blue-600 p-1 shadow-lg">
-            <img 
-              src={Logo} 
-              alt="The Orient Life Logo" 
+            <img
+              src={Logo}
+              alt="The Orient Life Logo"
               className="h-24 w-24 rounded-full object-cover"
             />
           </div>

@@ -112,10 +112,10 @@ const TransactionList = () => {
             setSearchPerformed(false);
             return;
         }
-
+        const apiUrl = import.meta.env.VITE_APP_BACKENDCUSF
         try {
             // Make an API call to the backend to get transactions by customerNIC
-            const response = await axios.get(`http://localhost:3001/api/customer/${searchNIC}`);
+            const response = await axios.get(apiUrl);
 
             if (response.data.success) {
                 setSearchResults(response.data.data); // Set the search results to the data from the API
@@ -145,11 +145,46 @@ const TransactionList = () => {
         setSelectedTransaction(transaction);
         setIsModalOpen(true);
     };
+    
+    // const handlePaymentUpdate = (transactionId, paymentUpdate) => {
+    //     console.log('Payment Update:', { transactionId, ...paymentUpdate });
+    //     // Here you would typically make an API call to update the payment
+    //     setIsModalOpen(false);
+    // };
 
-    const handlePaymentUpdate = (transactionId, paymentUpdate) => {
+    const handlePaymentUpdate = async (transactionId, paymentUpdate) => {
         console.log('Payment Update:', { transactionId, ...paymentUpdate });
-        // Here you would typically make an API call to update the payment
-        setIsModalOpen(false);
+    
+        // Ensure transactionId is present
+        // if (!transactionId) {
+        //     console.error('Transaction ID is missing');
+        //     return;
+        // }
+    
+        // Prepare the payload for the API request
+        const paymentData = {
+            paymentId: paymentUpdate.paymentId,
+            paymentAmount: paymentUpdate.amount,
+        };
+    
+        try {
+            const apiUrl = import.meta.env.VITE_APP_BACKENDCUSP
+            // Send a POST request to the backend API
+            const response = await axios.post(apiUrl, paymentData);
+    
+            // Handle the success response
+            console.log('Payment processed successfully:', response.data);
+    
+            // Optionally update the state or UI with the response data
+            // setTransaction(response.data.updatedTransaction);
+    
+            // Close the modal or perform any other UI update
+            setIsModalOpen(false);
+    
+        } catch (error) {
+            // Handle any errors that occur during the API call
+            console.error('Error processing payment:', error);
+        }
     };
 
     return (

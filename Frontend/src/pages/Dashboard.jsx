@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { CheckCircleIcon, XCircleIcon, ArrowUpIcon, ArrowDownIcon, CurrencyDollarIcon, UserGroupIcon, ClockIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+
 const data = [
   { name: 'Jan', easyPayment: 4000, cashPayment: 2400 },
   { name: 'Feb', easyPayment: 3000, cashPayment: 1398 },
@@ -53,7 +55,41 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function Dashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
+  const [count, setCount] = useState(null);
+  const [error, setError] = useState(null);
+  const [countE, setCountE] = useState(null);
+  const [countC, setCountC] = useState(null);
+  const [chartData, setChartData] = useState([]);
+
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTransactionCount = async () => {
+      try {
+        const apiUrlProcess = import.meta.env.VITE_APP_BACKENDPRODUCTPROCESS;
+        const apiUrlSEP = import.meta.env.VITE_APP_BACKENDPRODUCTSEP;
+        const apiUrlSFP = import.meta.env.VITE_APP_BACKENDPRODUCTSFP;
+        const apiUrlPT = import.meta.env.VITE_APP_BACKENDPRODUCTPT;
+
+        const response = await axios.post(apiUrlProcess);
+        setCount(response.data.count);
+        const responseE = await axios.get(apiUrlSEP);
+        setCountE(responseE.data.totalFirstPaymentDueAmount);
+        const responseC = await axios.get(apiUrlSFP);
+        setCountC(responseC.data.totalFirstPaymentDueAmount);
+        const res = await axios.get(apiUrlPT);
+        setChartData(res.data);
+      } catch (err) {
+        console.error('Error fetching transaction count:', err);
+        setError('Failed to fetch count');
+      }
+    };
+
+    fetchTransactionCount();
+  }, []);
+
+
   const handleClick = () => {
     navigate('/approval'); // replace with your target route
   };
@@ -101,7 +137,7 @@ export default function Dashboard() {
               </span>
             </div>
             <h3 className="text-lg font-semibold text-gray-700">Total Easy Payments</h3>
-            <p className="text-3xl font-bold text-gray-900 mb-2">$24,500</p>
+            <p className="text-3xl font-bold text-gray-900 mb-2">${countE}</p>
             <p className="text-sm text-gray-500">Compared to last month</p>
           </div>
           
@@ -116,7 +152,7 @@ export default function Dashboard() {
               </span>
             </div>
             <h3 className="text-lg font-semibold text-gray-700">Total Cash Payments</h3>
-            <p className="text-3xl font-bold text-gray-900 mb-2">$18,300</p>
+            <p className="text-3xl font-bold text-gray-900 mb-2">${countC}</p>
             <p className="text-sm text-gray-500">Compared to last month</p>
           </div>
           
@@ -133,7 +169,7 @@ export default function Dashboard() {
               </span>
             </div>
             <h3 className="text-lg font-semibold text-gray-700">Pending Approvals</h3>
-            <p className="text-3xl font-bold text-gray-900 mb-2">12</p>
+            <p className="text-3xl font-bold text-gray-900 mb-2">{count}</p>
             <p className="text-sm text-gray-500">New requests today</p>
           </div>
         </div>
@@ -144,7 +180,9 @@ export default function Dashboard() {
             <h3 className="text-lg font-semibold text-gray-700 mb-6">Payment Trends</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                {/* <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}> */}
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+
                   <defs>
                     <linearGradient id="easyPaymentGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10B981" stopOpacity={0.1}/>
@@ -168,7 +206,7 @@ export default function Dashboard() {
                   />
                   <Area 
                     type="monotone" 
-                    dataKey="cashPayment" 
+                    dataKey="fullPayment" 
                     stroke="#3B82F6" 
                     fillOpacity={1}
                     fill="url(#cashPaymentGradient)" 
@@ -182,7 +220,8 @@ export default function Dashboard() {
             <h3 className="text-lg font-semibold text-gray-700 mb-6">Payment Distribution</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                {/* <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}> */}
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis dataKey="name" stroke="#6B7280" />
                   <YAxis stroke="#6B7280" />
@@ -193,7 +232,7 @@ export default function Dashboard() {
                     radius={[4, 4, 0, 0]}
                   />
                   <Bar 
-                    dataKey="cashPayment" 
+                    dataKey="fullPayment" 
                     fill="#3B82F6" 
                     radius={[4, 4, 0, 0]}
                   />
