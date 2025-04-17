@@ -115,7 +115,7 @@ const TransactionList = () => {
         const apiUrl = import.meta.env.VITE_APP_BACKENDCUSF
         try {
             // Make an API call to the backend to get transactions by customerNIC
-            const response = await axios.get(apiUrl);
+            const response = await axios.get(`${apiUrl}/${searchNIC}`);
 
             if (response.data.success) {
                 setSearchResults(response.data.data); // Set the search results to the data from the API

@@ -70,6 +70,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
         ...(userRole === "Head Admin" 
           ? [{ name: "Restock", link: "/restock" }]
           : []),
+          { name: "Payment Update", link: "/repayment" },
       ],
     },
     {

@@ -133,7 +133,7 @@ function App() {
             }
           />
           <Route
-            path="/payback"
+            path="/repayment"
             element={
               <ProtectedRoute>
                 <TransactionList />

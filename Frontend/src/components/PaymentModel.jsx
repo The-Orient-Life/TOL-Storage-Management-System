@@ -108,16 +108,16 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
                       <Clock size={16} />
                       Month {payment.easyPaymentMonth} - {payment.easyPaymentYear}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    {/* <p className="text-sm text-gray-600">
                       Due Date: {new Date(payment.dueDate.$date).toLocaleDateString()}
-                    </p>
+                    </p> */}
                   </div>
                   <div className="text-right">
                     <p className="text-sm flex items-center gap-1 justify-end">
                       <DollarSign size={16} />
                       Amount: ${payment.amount}
                     </p>
-                    <p className="text-sm">Due: ${payment.dueAmount}</p>
+                    {/* <p className="text-sm">Due: ${payment.dueAmount}</p> */}
                     <span
                       className={`inline-block px-2 py-1 rounded-full text-xs ${
                         payment.status === 'pending'
