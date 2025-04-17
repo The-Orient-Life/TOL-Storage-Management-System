@@ -74,13 +74,13 @@ const userSchema = new Schema({
   // Role can be 'User' or 'Guarantor'
   role: {
     type: String,
-    enum: ['Customer', 'Executive', 'Branch Manager','Head Admin'],
+    enum: ['Customer', 'Executive', 'Branch Manager', 'Head Admin'],
     required: true
   },
   // Password field with a custom validation based on the role
   password: {
     type: String,
-    required: function() {
+    required: function () {
       return this.role === 'Executive' || this.role === 'Manager';
     },
     minlength: 6,  // Optional: enforce a minimum password length

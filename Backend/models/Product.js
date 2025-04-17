@@ -5,11 +5,11 @@ const productSchema = new mongoose.Schema({
     productCategory: { type: String, required: true },
     productVariants: [
         {
-            name: { type: String, required: true },  
+            name: { type: String, required: true },
             stock: { type: Number, required: true },
             price: { type: String, required: true }  // Include price for each variant
         }
-    ], 
+    ],
     productTotalWorth: { type: Number, required: true },
     productStockStatus: { type: String, required: true },
     imagePreview: { type: String },  // Add imagePreview to store base64 encoded image

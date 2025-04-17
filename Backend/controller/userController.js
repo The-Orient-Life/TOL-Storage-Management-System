@@ -26,13 +26,7 @@ router.post('/register', async (req, res) => {
   } = req.body;
 
   try {
-    // Validate role (should be 'User')
-    // if (role !== 'User') {
-    //   return res.status(400).json({ message: "Role must be 'User'" });
-    // }
-    // if (!role || role.trim() === '') {
-    //   role = 'Customer';  // Set to 'Customer' if the role is empty
-    // }
+
 
     // Check if email or username already exists
     const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
@@ -216,22 +210,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// get user API endpoint
-// router.get("/getUsers", isAuthenticated, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.id).select("-password");
 
-//     // If user is not found, return an error
-//     if (!user) {
-//       return res.status(404).json({ status: "error", error: "User not found." });
-//     }
-
-//     res.json(user); // Return the user details
-//   } catch (err) {
-//     console.error("Error in getUser route:", err); // Log error for debugging
-//     res.status(500).json({ status: "error", error: "Server error" });
-//   }
-// });
 
 // get user API endpoint
 router.get("/getUserDetails", async (req, res) => {

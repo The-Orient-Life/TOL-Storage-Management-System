@@ -14,7 +14,7 @@ app.use(express.json({ limit: "50mb" })); // Increase the body size limit
 app.use(
     cors({
         origin: process.env.CLIENT_URL,
-        methods: ["GET","POST","PUT","DELETE"],
+        methods: ["GET", "POST", "PUT", "DELETE"],
         allowedHeaders: ["Contend-Type", "Authorization"]
     })
 )

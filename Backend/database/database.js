@@ -4,14 +4,14 @@ let dbConnection = null;
 
 const connectionDB = async () => {
 
-    try{
-        if(!dbConnection){
+    try {
+        if (!dbConnection) {
 
             dbConnection = await mongoose.connect(process.env.DB_URL);
             console.log("MongoDB Connected");
         }
         return dbConnection;
-    }catch(error){
+    } catch (error) {
         console.error("Error Connected To MongoDB : ", error);
         throw error;
     }

@@ -28,15 +28,15 @@ const easyPaymentSchema = new Schema({
   dueDate: { type: Date, required: true }, // Date when the next payment is due
   easyPaymentMonth: { type: Number, required: true }, // Month (1 to 12)
   easyPaymentYear: { type: Number, required: true }, // Year (e.g., 2025)
-  status: { 
-    type: String, 
-    enum: ['paid', 'pending'], 
-    default: 'pending' 
+  status: {
+    type: String,
+    enum: ['paid', 'pending'],
+    default: 'pending'
   }, // Status of the payment
 });
 
 // Method to check if the payment is fully paid
-easyPaymentSchema.methods.checkFullPayment = function() {
+easyPaymentSchema.methods.checkFullPayment = function () {
   if (this.amount >= this.dueAmount) {
     this.status = 'paid'; // Mark as fully paid
     this.dueAmount = 0; // Set due amount to 0 since the full payment is made
@@ -73,7 +73,7 @@ const transactionSchema = new Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['Cash', 'Credit', 'Debit', 'Online','Easy Payment','Full Payment'],
+    enum: ['Cash', 'Credit', 'Debit', 'Online', 'Easy Payment', 'Full Payment'],
     required: true,
   },
   branch: { type: String, required: true },
@@ -94,7 +94,7 @@ transactionSchema.index({ transactionID: 1 });
 transactionSchema.index({ customerNIC: 1 });
 
 // Add a method to process full payment check for easy payments
-transactionSchema.methods.processEasyPayments = function() {
+transactionSchema.methods.processEasyPayments = function () {
   this.easyPayment.payments.forEach(payment => {
     payment.checkFullPayment(); // Check and update the status of each easy payment
   });
