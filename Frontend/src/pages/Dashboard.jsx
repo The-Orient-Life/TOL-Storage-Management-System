@@ -243,7 +243,7 @@ export default function Dashboard() {
         </div>
 
         {/* Approval Section */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-semibold text-gray-700">Easy Payment Approvals</h3>
             <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
@@ -302,7 +302,7 @@ export default function Dashboard() {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
