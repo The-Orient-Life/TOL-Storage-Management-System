@@ -14,7 +14,7 @@ function NewPurchaseCustomerSearch({ onCustomerSelect }) {
       const apiUrl = `${import.meta.env.VITE_APP_BACKENDGET}${nic}`;
 
       const response = await axios.get(apiUrl);
-      console.log("User found:", response.data);
+
 
       // Map the API response to the structure expected by your component
       const foundCustomer = {
@@ -26,7 +26,7 @@ function NewPurchaseCustomerSearch({ onCustomerSelect }) {
         guarantors: response.data.guarantors,
       };
 
-      sessionStorage.setItem("Customer NIC",response.data.nicNumber);
+      sessionStorage.setItem("Customer NIC", response.data.nicNumber);
 
       // console.log("Mapped User Data:", userData);
       return foundCustomer;
@@ -36,29 +36,7 @@ function NewPurchaseCustomerSearch({ onCustomerSelect }) {
     }
   };
 
-  // // Mock customer database
-  // const mockCustomers = [
-  //   {
-  //     id: '1',
-  //     nic: '123456789V',
-  //     name: 'John Doe',
-  //     phone: '+94 77 123 4567',
-  //     email: 'john@example.com',
-  //     address: '123 Main St, Colombo'
-  //   },
-  //   {
-  //     id: '2',
-  //     nic: '987654321V',
-  //     name: 'Jane Smith',
-  //     phone: '+94 77 987 6543',
-  //     email: 'jane@example.com',
-  //     address: '456 Oak Ave, Kandy'
-  //   }
-  // ];
 
-  // const searchCustomer = (searchNic) => {
-  //   return mockCustomers.find(customer => customer.nic === searchNic);
-  // };
 
   const handleSearch = async () => {
     const customer = await searchCustomer(nic);

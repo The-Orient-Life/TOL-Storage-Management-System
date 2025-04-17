@@ -4,109 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from "sweetalert2";
 
-// Example transactions data (you would fetch this from your API)
-const transactions = [
-  {
-    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
-    customerName: "Kesari",
-    customerNIC: "112233445V",
-    product: {
-      productID: "67e5057febfcab56e22f22f9",
-      productName: "JL 100 Headset",
-      productQuantity: 1
-    },
-    executive: {
-      executiveName: "Yeppy",
-      executiveNIC: "987654321V"
-    },
-    paymentMethod: "Easy Payment",
-    branch: "Katana",
-    status: "Completed",
-    headAdminApproval: false,
-    createdAt: "2025-03-28T05:26:25.084Z"
-  },
-  {
-    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
-    customerName: "Kesari",
-    customerNIC: "112233445V",
-    product: {
-      productID: "67e5057febfcab56e22f22f9",
-      productName: "JL 100 Headset",
-      productQuantity: 1
-    },
-    executive: {
-      executiveName: "Yeppy",
-      executiveNIC: "987654321V"
-    },
-    paymentMethod: "Easy Payment",
-    branch: "Katana",
-    status: "Completed",
-    headAdminApproval: false,
-    createdAt: "2025-03-28T05:26:25.084Z"
-  },
-  {
-    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
-    customerName: "Kesari",
-    customerNIC: "112233445V",
-    product: {
-      productID: "67e5057febfcab56e22f22f9",
-      productName: "JL 100 Headset",
-      productQuantity: 1
-    },
-    executive: {
-      executiveName: "Yeppy",
-      executiveNIC: "987654321V"
-    },
-    paymentMethod: "Easy Payment",
-    branch: "Katana",
-    status: "Completed",
-    headAdminApproval: false,
-    createdAt: "2025-03-28T05:26:25.084Z"
-  },
-  {
-    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
-    customerName: "Kesari",
-    customerNIC: "112233445V",
-    product: {
-      productID: "67e5057febfcab56e22f22f9",
-      productName: "JL 100 Headset",
-      productQuantity: 1
-    },
-    executive: {
-      executiveName: "Yeppy",
-      executiveNIC: "987654321V"
-    },
-    paymentMethod: "Easy Payment",
-    branch: "Katana",
-    status: "Completed",
-    headAdminApproval: false,
-    createdAt: "2025-03-28T05:26:25.084Z"
-  },
-  {
-    transactionID: "197cf78b-44dc-4970-a948-6cbf026f61a6",
-    customerName: "Kesari",
-    customerNIC: "112233445V",
-    product: {
-      productID: "67e5057febfcab56e22f22f9",
-      productName: "JL 100 Headset",
-      productQuantity: 1
-    },
-    executive: {
-      executiveName: "Yeppy",
-      executiveNIC: "987654321V"
-    },
-    paymentMethod: "Easy Payment",
-    branch: "Katana",
-    status: "Completed",
-    headAdminApproval: false,
-    createdAt: "2025-03-28T05:26:25.084Z"
-  },
 
-
-
-
-  // Add more sample data here if needed
-];
 
 function PurcheseHistory() {
 
@@ -121,7 +19,7 @@ function PurcheseHistory() {
       .then((response) => {
         setTransactions(response.data.transactions); // Set transactions in state
         setLoading(false); // Stop loading
-        console.log(transactions)
+
       })
       .catch((error) => {
         console.error('Error fetching transactions:', error);
@@ -202,11 +100,11 @@ function PurcheseHistory() {
                       <div className={`flex items-center space-x-2 ${transaction.headAdminApproval || transaction.headAdminApproval === false ? (transaction.headAdminApproval ? 'text-green-600' : 'text-red-600') : 'text-yellow-600'}`}>
                         {transaction.headAdminApproval === null ? (
                           <>
-                           <CircleAlert  className="w-5 h-5" />
-                          <span className="text-sm font-medium">Processing</span>
-                          
+                            <CircleAlert className="w-5 h-5" />
+                            <span className="text-sm font-medium">Processing</span>
+
                           </>
-                          
+
                         ) : transaction.headAdminApproval ? (
                           <>
                             <CheckCircle className="w-5 h-5" />

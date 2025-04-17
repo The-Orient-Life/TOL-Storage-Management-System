@@ -3,40 +3,7 @@ import { Package2, AlertTriangle, CheckCircle2, History, List, Grid, Search } fr
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const sampleProducts = [
-  {
-    "_id": { "$oid": "67e6864c71e4e10a69056347" },
-    "productName": "DELL",
-    "productCategory": "Electronics",
-    "productVariants": [
-      { "name": "Dell V1", "stock": 49, "price": "20", "_id": { "$oid": "67e6864c71e4e10a69056348" } },
-      { "name": "Dell V2", "stock": 49, "price": "20", "_id": { "$oid": "67e6864c71e4e10a69056349" } },
-      { "name": "Dell V3", "stock": 49, "price": "20", "_id": { "$oid": "67e6864c71e4e10a6905634a" } },
-      { "name": "Dell v4", "stock": 42, "price": "20", "_id": { "$oid": "67e6864c71e4e10a6905634b" } }
-    ],
-    "productTotalWorth": 4000,
-    "productStockStatus": "in-stock",
-    "imagePreview": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?q=80&w=200",
-    "createdAt": { "$date": "2025-03-28T11:21:48.596Z" },
-    "updatedAt": { "$date": "2025-03-29T07:34:37.485Z" },
-    "__v": 0
-  },
-  {
-    "_id": { "$oid": "67e6864c71e4e10a69056350" },
-    "productName": "HP Laptop",
-    "productCategory": "Electronics",
-    "productVariants": [
-      { "name": "HP Pro", "stock": 15, "price": "30", "_id": { "$oid": "67e6864c71e4e10a69056351" } },
-      { "name": "HP Elite", "stock": 8, "price": "40", "_id": { "$oid": "67e6864c71e4e10a69056352" } }
-    ],
-    "productTotalWorth": 3000,
-    "productStockStatus": "low-stock",
-    "imagePreview": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=200",
-    "createdAt": { "$date": "2025-03-28T11:21:48.596Z" },
-    "updatedAt": { "$date": "2025-03-29T07:34:37.485Z" },
-    "__v": 0
-  }
-];
+
 
 function Restock() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -46,33 +13,11 @@ function Restock() {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
 
-  // const handleRestock = () => {
-  //   if (selectedVariant && restockAmount > 0) {
-  //     // Log the restock details
-  //     console.log({
-  //       variantId: selectedVariant._id,
-  //       variantName: selectedVariant.name,
-  //       currentStock: selectedVariant.stock,
-  //       restockAmount: restockAmount,
-  //       newStockLevel: selectedVariant.stock + restockAmount
-  //     });
 
-  //     setSelectedVariant(null);/////////////////
-  //     /////////////////////////////////////////
-  //     setRestockAmount(0);
-  //   }
-  // };
 
   const handleRestock = () => {
     if (selectedVariant && restockAmount > 0) {
       // Log the restock details to the console (optional for debugging)
-      console.log({
-        variantId: selectedVariant._id,
-        variantName: selectedVariant.name,
-        currentStock: selectedVariant.stock,
-        restockAmount: restockAmount,
-        newStockLevel: selectedVariant.stock + restockAmount,
-      });
 
       // Prepare the data to be sent to the backend
       const restockData = {

@@ -4,100 +4,6 @@ import { Search, AlertCircle } from 'lucide-react';
 import PaymentModal from '../components/PaymentModel';
 import axios from "axios";
 
-const mockTransactions = [
-    {
-        _id: { $oid: "67e7a25c88fe2d3014bade18" },
-        transactionID: "098a6415-b54e-4799-a55f-e79d0db56562",
-        customerName: "Anusha Lakmali",
-        customerNIC: "123456789V",
-        product: {
-            productID: "67e6864c71e4e10a6905634a",
-            productName: "Dell V3",
-            productQuantity: 1
-        },
-        easyPayment: {
-            payments: [
-                {
-                    _id: { $oid: "67e7a25c88fe2d3014bade1c" },
-                    amount: 6,
-                    doneDate: { $date: "2025-03-29T07:33:48.320Z" },
-                    dueAmount: 18,
-                    dueDate: { $date: "2025-04-29T07:33:48.320Z" },
-                    easyPaymentMonth: 1,
-                    easyPaymentYear: 2025,
-                    status: "pending"
-                },
-                {
-                    _id: { $oid: "67e7a25c88fe2d3014bade1d" },
-                    amount: 6,
-                    doneDate: { $date: "2025-03-29T07:33:48.320Z" },
-                    dueAmount: 12,
-                    dueDate: { $date: "2025-05-29T07:33:48.320Z" },
-                    easyPaymentMonth: 2,
-                    easyPaymentYear: 2025,
-                    status: "pending"
-                },
-                {
-                    _id: { $oid: "67e7a25c88fe2d3014bade1e" },
-                    amount: 6,
-                    doneDate: { $date: "2025-03-29T07:33:48.321Z" },
-                    dueAmount: 6,
-                    dueDate: { $date: "2025-06-29T07:33:48.321Z" },
-                    easyPaymentMonth: 3,
-                    easyPaymentYear: 2025,
-                    status: "pending"
-                }
-            ]
-        },
-        status: "Pending"
-    },
-    {
-        _id: { $oid: "67e7a25c88fe2d3014bade18" },
-        transactionID: "098a6415-b54e-4799-a55f-e79d0db56562",
-        customerName: "Anusha Lakmali",
-        customerNIC: "123456789V",
-        product: {
-            productID: "67e6864c71e4e10a6905634a",
-            productName: "Dell V3",
-            productQuantity: 1
-        },
-        easyPayment: {
-            payments: [
-                {
-                    _id: { $oid: "67e7a25c88fe2d3014bade1c" },
-                    amount: 6,
-                    doneDate: { $date: "2025-03-29T07:33:48.320Z" },
-                    dueAmount: 18,
-                    dueDate: { $date: "2025-04-29T07:33:48.320Z" },
-                    easyPaymentMonth: 1,
-                    easyPaymentYear: 2025,
-                    status: "pending"
-                },
-                {
-                    _id: { $oid: "67e7a25c88fe2d3014bade1d" },
-                    amount: 6,
-                    doneDate: { $date: "2025-03-29T07:33:48.320Z" },
-                    dueAmount: 12,
-                    dueDate: { $date: "2025-05-29T07:33:48.320Z" },
-                    easyPaymentMonth: 2,
-                    easyPaymentYear: 2025,
-                    status: "pending"
-                },
-                {
-                    _id: { $oid: "67e7a25c88fe2d3014bade1e" },
-                    amount: 6,
-                    doneDate: { $date: "2025-03-29T07:33:48.321Z" },
-                    dueAmount: 6,
-                    dueDate: { $date: "2025-06-29T07:33:48.321Z" },
-                    easyPaymentMonth: 3,
-                    easyPaymentYear: 2025,
-                    status: "pending"
-                }
-            ]
-        },
-        status: "Pending"
-    }
-];
 
 const TransactionList = () => {
     const [searchNIC, setSearchNIC] = useState('');
@@ -119,10 +25,10 @@ const TransactionList = () => {
 
             if (response.data.success) {
                 setSearchResults(response.data.data); // Set the search results to the data from the API
-                console.log("This data from backend ",response)
+
                 setSearchPerformed(true);
-                console.log("This Is Data ",response)
-                // setIsModalOpen(true);
+
+
             } else {
                 setSearchResults([]);
                 setSearchPerformed(true);
@@ -133,54 +39,37 @@ const TransactionList = () => {
             setSearchPerformed(true);
         }
 
-        // // Simulate API call with mock data
-        // const results = searchResults.filter(
-        //     transaction => transaction.customerNIC.toLowerCase().includes(searchNIC.toLowerCase())
-        // );
-        // setSearchResults(results);
-        // setSearchPerformed(true);
+
     };
 
     const handleTransactionClick = (transaction) => {
         setSelectedTransaction(transaction);
         setIsModalOpen(true);
     };
-    
-    // const handlePaymentUpdate = (transactionId, paymentUpdate) => {
-    //     console.log('Payment Update:', { transactionId, ...paymentUpdate });
-    //     // Here you would typically make an API call to update the payment
-    //     setIsModalOpen(false);
-    // };
+
+
 
     const handlePaymentUpdate = async (transactionId, paymentUpdate) => {
-        console.log('Payment Update:', { transactionId, ...paymentUpdate });
-    
-        // Ensure transactionId is present
-        // if (!transactionId) {
-        //     console.error('Transaction ID is missing');
-        //     return;
-        // }
-    
+
+
+
+
         // Prepare the payload for the API request
         const paymentData = {
             paymentId: paymentUpdate.paymentId,
             paymentAmount: paymentUpdate.amount,
         };
-    
+
         try {
             const apiUrl = import.meta.env.VITE_APP_BACKENDCUSP
             // Send a POST request to the backend API
             const response = await axios.post(apiUrl, paymentData);
-    
-            // Handle the success response
-            console.log('Payment processed successfully:', response.data);
-    
-            // Optionally update the state or UI with the response data
-            // setTransaction(response.data.updatedTransaction);
-    
+
+
+
             // Close the modal or perform any other UI update
             setIsModalOpen(false);
-    
+
         } catch (error) {
             // Handle any errors that occur during the API call
             console.error('Error processing payment:', error);

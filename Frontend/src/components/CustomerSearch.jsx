@@ -37,7 +37,6 @@ function CustomerSearch() {
       const apiUrl = `${import.meta.env.VITE_APP_BACKENDGET}${nic}`;
 
       const response = await axios.get(apiUrl);
-      console.log("User found:", response.data);
 
       // Map the API response to the structure expected by your component
       const userData = {
@@ -57,22 +56,7 @@ function CustomerSearch() {
     }
   };
 
-  // const mockSearchUser = (nic) => {
-  //   // Construct the full API URL by appending the NIC number
-  //   const apiUrl = `${import.meta.env.VITE_APP_BACKENDGET}${nic}`;
 
-  //   axios
-  //     .get(apiUrl)
-  //     .then((response) => {
-  //       // Handle success - the real user data will be in response.data
-  //       console.log("User found:", response.data);
-  //       return response.data;
-  //     })
-  //     .catch((error) => {
-  //       // Handle error - in case of failure during the API call
-  //       console.error("Error fetching user data:", error);
-  //     });
-  // };
 
   const handleSearch = async () => {
     const result = await mockSearchUser(nicSearch);

@@ -34,7 +34,7 @@ function App() {
       <div className={`mt-20 transition-all duration-300 ${isSidebarOpen && !isLoginPage ? "ml-64" : "ml-0"}`}>
         <Routes>
           <Route exact path="/" element={<LoginPage />} />
-          
+
           {/* Protected Routes */}
           <Route
             path="/home"

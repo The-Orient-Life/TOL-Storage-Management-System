@@ -4,10 +4,10 @@ import axios from 'axios';
 
 // Mock customer database with updated payment structure
 const mockCustomerDB = [
-  { 
-    id: 1, 
-    name: "Anusha Lakmali", 
-    nic: "123456789V", 
+  {
+    id: 1,
+    name: "Anusha Lakmali",
+    nic: "123456789V",
     email: "anusha@example.com",
     transaction: {
       _id: { $oid: "67e77ef988fe2d3014badd0b" },
@@ -96,7 +96,7 @@ function PaymentSummary({ payments }) {
           </div>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
         <div className="flex items-center gap-3">
           <div className="bg-green-100 p-2 rounded-lg">
@@ -108,7 +108,7 @@ function PaymentSummary({ payments }) {
           </div>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
         <div className="flex items-center gap-3">
           <div className="bg-orange-100 p-2 rounded-lg">
@@ -120,7 +120,7 @@ function PaymentSummary({ payments }) {
           </div>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
         <div className="flex items-center gap-3">
           <div className="bg-purple-100 p-2 rounded-lg">
@@ -171,7 +171,7 @@ function PaymentHistory({ transaction, onClose }) {
           newPayments[i] = payment;
         }
       }
-console.log("this Changed Data ", newPayments)
+
       return newPayments;
     });
 
@@ -204,7 +204,7 @@ console.log("this Changed Data ", newPayments)
 
           <CustomerInfo transaction={transaction} />
           <PaymentSummary payments={payments} />
-          
+
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -248,7 +248,7 @@ function CustomerInfo({ transaction }) {
           {transaction.status}
         </span>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
         <div className="flex items-center gap-2">
           <User className="w-4 h-4 text-gray-500" />
@@ -257,7 +257,7 @@ function CustomerInfo({ transaction }) {
             <p className="font-medium">{transaction.customerName}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <CreditCard className="w-4 h-4 text-gray-500" />
           <div>
@@ -265,7 +265,7 @@ function CustomerInfo({ transaction }) {
             <p className="font-medium">{transaction.customerNIC}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Package className="w-4 h-4 text-gray-500" />
           <div>
@@ -273,7 +273,7 @@ function CustomerInfo({ transaction }) {
             <p className="font-medium">{transaction.product.productName}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Search className="w-4 h-4 text-gray-500" />
           <div>
@@ -286,9 +286,9 @@ function CustomerInfo({ transaction }) {
   );
 }
 
-function PaymentCard({ 
-  payment, 
-  onPaymentSubmit, 
+function PaymentCard({
+  payment,
+  onPaymentSubmit,
   transactionID,
   isSelected,
   onSelect,
@@ -300,13 +300,13 @@ function PaymentCard({
   const isPending = payment.status === 'pending';
 
   return (
-    <div 
+    <div
       className={`
         p-4 rounded-lg shadow-sm transition-all cursor-pointer
         ${isSelected ? 'ring-2 ring-blue-500' : ''}
-        ${isPending 
-          ? isOverdue 
-            ? 'bg-red-50 border border-red-200' 
+        ${isPending
+          ? isOverdue
+            ? 'bg-red-50 border border-red-200'
             : 'bg-white border border-gray-200'
           : 'bg-green-50 border border-green-200'
         }
@@ -336,7 +336,7 @@ function PaymentCard({
             Due: {new Date(payment.dueDate).toLocaleDateString()}
           </span>
         </div>
-        
+
         <div className="flex justify-between items-center">
           <div>
             <p className="text-sm font-medium">Required: ${payment.amount}</p>
@@ -349,7 +349,7 @@ function PaymentCard({
               </p>
             )}
           </div>
-          
+
           {isPending && isSelected && (
             <div className="space-y-2">
               <input
@@ -370,7 +370,7 @@ function PaymentCard({
               </button>
             </div>
           )}
-          
+
           {!isPending && (
             <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
               Completed
@@ -392,7 +392,6 @@ function RegistrationForm({ onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Registration data:', formData);
     onClose();
   };
 
@@ -482,7 +481,7 @@ function CustomerManagement({ customer, onViewPaymentHistory }) {
           Active Customer
         </span>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <p className="text-sm text-gray-600">Full Name</p>
@@ -499,7 +498,7 @@ function CustomerManagement({ customer, onViewPaymentHistory }) {
       </div>
 
       <div className="pt-4">
-        <button 
+        <button
           onClick={onViewPaymentHistory}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
@@ -563,8 +562,8 @@ function PaymentUpdate() {
         {!showRegistration && searched && (
           <div className="mt-8">
             {customer ? (
-              <CustomerManagement 
-                customer={customer} 
+              <CustomerManagement
+                customer={customer}
                 onViewPaymentHistory={() => setShowPaymentHistory(true)}
               />
             ) : (

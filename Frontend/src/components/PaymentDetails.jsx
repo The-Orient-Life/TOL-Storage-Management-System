@@ -22,125 +22,41 @@ export default function PaymentDetails({
   const remainingBalance = validSubtotal - numericDownPayment;
   const monthlyPayment = paymentType === 'Easy Payment' ? remainingBalance / months : 0;
 
-  // const handleCompletePurchase = async () => {
-  //   // Log product details
-  //   console.log('Selected Products:', selectedProducts);
-  //   const productIds = selectedProducts?.map(product => product.id || 'ID not found');
-  //   console.log('Selected Product IDs:', productIds);
 
-  //   // Log payment details
-  //   console.log('Subtotal:', validSubtotal.toFixed(2));
-  //   const CustomerNic = sessionStorage.getItem("Customer NIC");
-  //   console.log("This Is Customer ", CustomerNic);
-  //   // Retrieve the data from sessionStorage
-  //   const storedUserDetails = sessionStorage.getItem('UserDetails');
-
-  //   // Check if the data exists
-  //   if (storedUserDetails) {
-  //     // Parse the data
-  //     const parsedUserDetails = JSON.parse(storedUserDetails);
-
-  //     // Check if 'data' exists and 'nicNumber' is inside 'data'
-  //     if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.nicNumber) {
-  //       const userNic = parsedUserDetails.data.nicNumber;
-  //       console.log("This Is Stuff Mem NIC: ", userNic);
-  //       setExecutiveNIC(userNic);
-  //     } else {
-  //       console.error("NIC Number is undefined or missing from stored data.");
-  //     }
-  //   } else {
-  //     console.error("No data found in sessionStorage for 'UserDetails'.");
-  //   }
-
-
-
-
-  //   if (paymentType === 'Easy Payment') {
-  //     console.log('Down Payment:', numericDownPayment);
-  //     console.log('Remaining Balance:', remainingBalance.toFixed(2));
-  //     console.log('Monthly Payment:', monthlyPayment.toFixed(2));
-  //     console.log('Payment Type:', paymentType);
-  //     console.log('Months:', months);
-
-
-  //      // Construct the data object to send to backend
-  //   const transactionData = {
-  //     customerNIC: CustomerNic,
-  //     executiveNIC: executiveNIC,
-  //     productVariantId: productIds[0], // Assuming you're sending the first selected product
-  //     subtotal: validSubtotal,
-  //     downPayment: numericDownPayment,
-  //     remainingBalance: remainingBalance,
-  //     monthlyPayment: monthlyPayment,
-  //     paymentType: paymentType,
-  //     easyPaymentMonths: months,
-  //   };
-
-  //   try {
-  //     // Send data to the backend using fetch
-  //     const response = await fetch('http://localhost:3001/api/savetransactionG', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(transactionData),
-  //     });
-
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       console.log('Transaction saved successfully', data);
-  //       // Handle success (e.g., show confirmation message, redirect, etc.)
-  //     } else {
-  //       console.error('Error saving transaction:', data.message);
-  //       // Handle error (e.g., show error message to the user)
-  //     }
-  //   } catch (error) {
-  //     console.error('Error sending transaction data:', error);
-  //   }
-  
-
-  //   } else {
-  //     console.log('Payment Type:', paymentType);
-  //   }
-  // };
 
   const handleCompletePurchase = async () => {
     // Log product details
-    console.log('Selected Products:', selectedProducts);
+
     const productIds = selectedProducts?.map(product => product.id || 'ID not found');
-    console.log('Selected Product IDs:', productIds);
-  
+
+
     // Log payment details
-    console.log('Subtotal:', validSubtotal.toFixed(2));
+
     const CustomerNic = sessionStorage.getItem("Customer NIC");
-    console.log("This Is Customer NIC: ", CustomerNic);
-  
+
+
     // Retrieve the data from sessionStorage
     const storedUserDetails = sessionStorage.getItem('UserDetails');
     let executiveNIC = ''; // Assuming executive NIC needs to be set as well
     if (storedUserDetails) {
       // Parse the data
       const parsedUserDetails = JSON.parse(storedUserDetails);
-  
+
       // Check if 'data' exists and 'nicNumber' is inside 'data'
       if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.nicNumber) {
         executiveNIC = parsedUserDetails.data.nicNumber;
-        console.log("This Is Executive NIC: ", executiveNIC);
+
       } else {
         console.error("NIC Number is undefined or missing from stored data.");
       }
     } else {
       console.error("No data found in sessionStorage for 'UserDetails'.");
     }
-  
+
     // Prepare data to send for "Easy Payment"
     if (paymentType === 'Easy Payment' || paymentType === 'Full Payment') {
-      console.log('Down Payment:', numericDownPayment);
-      console.log('Remaining Balance:', remainingBalance.toFixed(2));
-      console.log('Monthly Payment:', monthlyPayment.toFixed(2));
-      console.log('Payment Type:', paymentType);
-      console.log('Months:', months);
-  
+
+
       // Construct the data object to send to backend
       const transactionData = {
         customerNIC: CustomerNic,
@@ -153,8 +69,8 @@ export default function PaymentDetails({
         paymentType: paymentType,
         easyPaymentMonths: months,
       };
-  console.log("This is sending Dataaaaaaaa",transactionData)
-  const apiUrl = import.meta.env.VITE_APP_BACKENDADDT
+
+      const apiUrl = import.meta.env.VITE_APP_BACKENDADDT
 
       try {
         // Send data to the backend using fetch
@@ -165,40 +81,39 @@ export default function PaymentDetails({
           },
           body: JSON.stringify(transactionData),
         });
-  
+
         const data = await response.json();
         if (response.ok) {
-          console.log('Transaction saved successfully', data);
+
           Swal.fire({
-                  position: "center",
-                  icon: "success",
-                  title: "Successful",
-                  showConfirmButton: false,
-                  iconColor: "#4BB543",
-                  timer: 2000,
-                });
+            position: "center",
+            icon: "success",
+            title: "Successful",
+            showConfirmButton: false,
+            iconColor: "#4BB543",
+            timer: 2000,
+          });
           // Handle success (e.g., show confirmation message, redirect, etc.)
         } else {
           console.error('Error saving transaction:', data.message);
           // Handle error (e.g., show error message to the user)
           Swal.fire({
-                  position: "center",
-                  icon: "error",
-                  title: "Unsuccessful",
-                  showConfirmButton: false,
-                  iconColor: "#4BB543",
-                  timer: 2000,
-                });
+            position: "center",
+            icon: "error",
+            title: "Unsuccessful",
+            showConfirmButton: false,
+            iconColor: "#4BB543",
+            timer: 2000,
+          });
         }
       } catch (error) {
         console.error('Error sending transaction data:', error);
       }
     } else {
-      console.log('Payment Type:', paymentType);
       // Handle other payment types if necessary
     }
   };
-  
+
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
@@ -239,8 +154,8 @@ export default function PaymentDetails({
               <div className="grid grid-cols-2 gap-4">
                 <button
                   className={`px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${paymentType === 'Full Payment'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   onClick={() => {
                     onPaymentTypeChange('Full Payment');
@@ -252,8 +167,8 @@ export default function PaymentDetails({
                 </button>
                 <button
                   className={`px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${paymentType === 'Easy Payment'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   onClick={() => onPaymentTypeChange('Easy Payment')}
                 >

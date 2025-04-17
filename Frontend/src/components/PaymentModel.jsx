@@ -23,16 +23,10 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
       year: payment.easyPaymentYear
     };
 
-    console.log('Payment Details:', {
-      monthId: payment._id,
-      paidAmount: amount,
-      dueAmount: payment.dueAmount - amount,
-      month: payment.easyPaymentMonth,
-      year: payment.easyPaymentYear
-    });
+
 
     onPaymentUpdate(update);
-    
+
     // Reset form
     setSelectedPayment(null);
     setPaymentAmount('');
@@ -56,7 +50,7 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
       <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">Payment Management</h2>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 transition-colors"
           >
@@ -95,11 +89,10 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
             {sortedPayments.map((payment) => (
               <div
                 key={payment._id}
-                className={`border p-4 rounded-lg transition-all ${
-                  selectedPayment?._id === payment._id
+                className={`border p-4 rounded-lg transition-all ${selectedPayment?._id === payment._id
                     ? 'border-blue-500 shadow-md'
                     : 'hover:border-gray-300'
-                }`}
+                  }`}
                 onClick={() => setSelectedPayment(payment)}
               >
                 <div className="flex justify-between items-center">
@@ -119,11 +112,10 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
                     </p>
                     {/* <p className="text-sm">Due: ${payment.dueAmount}</p> */}
                     <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs ${
-                        payment.status === 'pending'
+                      className={`inline-block px-2 py-1 rounded-full text-xs ${payment.status === 'pending'
                           ? 'bg-yellow-100 text-yellow-800'
                           : 'bg-green-100 text-green-800'
-                      }`}
+                        }`}
                     >
                       {payment.status}
                     </span>
@@ -162,7 +154,7 @@ const PaymentModal = ({ transaction, onClose, onPaymentUpdate }) => {
                         />
                       </div>
                     </div>
-                    
+
                     <div className="bg-gray-50 p-3 rounded-lg">
                       <p className="text-sm text-gray-600">
                         Remaining Amount: ${calculateRemainingAmount(payment)}

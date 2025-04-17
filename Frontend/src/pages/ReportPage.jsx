@@ -17,77 +17,13 @@ function Report() {
   const [showTransactionOptions, setShowTransactionOptions] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState('weekly');
 
-  // const handleOptionClick = (optionName) => {
-  //   console.log('Clicked:', optionName);
-  //   console.log('Period:', selectedPeriod);
-  // };
-
-  // const handleOptionClick = async (optionName) => {
-
-  //   if (optionName === 'Products') {
-  //     try {
-  //       const response = await axios.get('http://localhost:3001/api/export-products', {
-  //         params: {
-  //           selectedPeriod,
-  //         },
-  //         responseType: 'blob',
-  //       });
-    
-  //       const url = window.URL.createObjectURL(new Blob([response.data]));
-  //       const link = document.createElement('a');
-  //       link.href = url;
-  //       link.setAttribute('download', `products-${selectedPeriod}.xlsx`);
-  //       document.body.appendChild(link);
-  //       link.click();
-  //       link.remove();
-  //     } catch (err) {
-  //       console.error('Product export failed:', err);
-  //       Swal.fire({
-  //         icon: 'error',
-  //         title: 'Oops...',
-  //         text: 'Failed to export products!',
-  //       });
-  //     }
-  //   }
-    
 
 
-
-  //   try {
-  //     console.log('Clicked:', optionName);
-  //     console.log('Period:', selectedPeriod);
-  
-  //     const response = await axios.get('http://localhost:3001/api/export-transactionsTest', {
-  //       params: {
-  //         optionName,
-  //         selectedPeriod,
-  //       },
-  //       responseType: 'blob', // Important: Get binary data
-  //     });
-  
-  //     // Create a blob URL for the Excel file
-  //     const url = window.URL.createObjectURL(new Blob([response.data]));
-  //     const link = document.createElement('a');
-  //     link.href = url;
-  //     link.setAttribute('download', `transactions-${optionName}-${selectedPeriod}.xlsx`);
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     link.remove();
-  //   } catch (error) {
-  //     console.error('Export failed:', error);
-  //     Swal.fire({
-  //       icon: 'error',
-  //       title: 'Oops...',
-  //       text: 'Failed to export transactions!',
-  //     });
-  //   }
-  // };
-  
   const handleOptionClick = async (optionName) => {
     try {
       let url = '';
       let filename = '';
-  
+
       if (optionName === 'Products') {
         url = 'http://localhost:3001/api/export-products';
         filename = `products-${selectedPeriod}.xlsx`;
@@ -98,7 +34,7 @@ function Report() {
         url = 'http://localhost:3001/api/export-transactionsTest';
         filename = `transactions-${optionName}-${selectedPeriod}.xlsx`;
       }
-  
+
       const response = await axios.get(url, {
         params: {
           optionName,
@@ -106,7 +42,7 @@ function Report() {
         },
         responseType: 'blob',
       });
-  
+
       const blob = new Blob([response.data]);
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -124,8 +60,8 @@ function Report() {
       });
     }
   };
-  
-  
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -141,24 +77,22 @@ function Report() {
       <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {/* Time Period Filters */}
         <div className="mb-12 flex flex-wrap gap-4 justify-center">
-          <button 
+          <button
             onClick={() => setSelectedPeriod('weekly')}
-            className={`flex items-center gap-2 px-8 py-4 rounded-full text-lg font-medium transition-all duration-200 ${
-              selectedPeriod === 'weekly'
+            className={`flex items-center gap-2 px-8 py-4 rounded-full text-lg font-medium transition-all duration-200 ${selectedPeriod === 'weekly'
                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105'
                 : 'bg-white text-indigo-600 hover:bg-indigo-50'
-            }`}
+              }`}
           >
             <Calendar className="h-5 w-5" />
             Weekly Report
           </button>
-          <button 
+          <button
             onClick={() => setSelectedPeriod('monthly')}
-            className={`flex items-center gap-2 px-8 py-4 rounded-full text-lg font-medium transition-all duration-200 ${
-              selectedPeriod === 'monthly'
+            className={`flex items-center gap-2 px-8 py-4 rounded-full text-lg font-medium transition-all duration-200 ${selectedPeriod === 'monthly'
                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105'
                 : 'bg-white text-indigo-600 hover:bg-indigo-50'
-            }`}
+              }`}
           >
             <CalendarDays className="h-5 w-5" />
             Monthly Report
@@ -187,7 +121,7 @@ function Report() {
 
             {/* Transaction Options Dropdown */}
             <div className={`mt-4 space-y-4 transition-all duration-200 ${showTransactionOptions ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
-              <button 
+              <button
                 className="w-full bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200 transform hover:translate-x-2"
                 onClick={() => handleOptionClick('Completed Payments')}
               >
@@ -202,7 +136,7 @@ function Report() {
                 </div>
               </button>
 
-              <button 
+              <button
                 className="w-full bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200 transform hover:translate-x-2"
                 onClick={() => handleOptionClick('Ongoing Payments')}
               >
@@ -219,7 +153,7 @@ function Report() {
             </div>
           </div>
 
-          <button 
+          <button
             className="bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition-all duration-200 group relative overflow-hidden"
             onClick={() => handleOptionClick('Products')}
           >
@@ -235,7 +169,7 @@ function Report() {
             </div>
           </button>
 
-          <button 
+          <button
             className="bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition-all duration-200 group relative overflow-hidden"
             onClick={() => handleOptionClick('Customers')}
           >

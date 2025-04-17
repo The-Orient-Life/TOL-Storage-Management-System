@@ -1,30 +1,30 @@
-import { useState, useEffect  } from 'react';
+import { useState, useEffect } from 'react';
 import Swal from "sweetalert2";
-import { 
-    Smartphone, 
-    Laptop, 
-    Headphones, 
-    Package, 
-    Search,
-    AlertCircle,
-    Battery,
-    Tablet,
-    Monitor,
-    LayoutGrid,
-    List,
-    SlidersHorizontal,
-    ChevronRight,
-    Tv,
-    Watch,
-    Speaker,
-    Camera,
-    Filter
-  } from 'lucide-react';
-  
+import {
+  Smartphone,
+  Laptop,
+  Headphones,
+  Package,
+  Search,
+  AlertCircle,
+  Battery,
+  Tablet,
+  Monitor,
+  LayoutGrid,
+  List,
+  SlidersHorizontal,
+  ChevronRight,
+  Tv,
+  Watch,
+  Speaker,
+  Camera,
+  Filter
+} from 'lucide-react';
+
 import axios from 'axios';
-  
+
 function ProductView() {
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedSubCategory, setSelectedSubCategory] = useState("all");
@@ -33,186 +33,19 @@ function ProductView() {
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 2000]);
 
-  // const products = [
-  //   // Samsung Phones
-  //   {
-  //     id: 1,
-  //     name: "Samsung",
-  //     category: "Smartphones",
-  //     stock: 11,
-  //     price: 1199,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["Galaxy S25", "Galaxy S24+", "Galaxy A54"],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Samsung Galaxy S24+",
-  //     category: "Smartphones",
-  //     stock: 20,
-  //     price: 999,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["50MP Camera", '6.7" Display', "Snapdragon 8 Gen 3"],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Samsung Galaxy A54",
-  //     category: "Smartphones",
-  //     stock: 30,
-  //     price: 449,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["50MP Camera", '6.4" AMOLED', "5G", "IP67"],
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Samsung Galaxy A34",
-  //     category: "Smartphones",
-  //     stock: 15,
-  //     price: 399,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["48MP Camera", '6.6" AMOLED', "5G"],
-  //   },
 
-  //   // Vivo Phones
-  //   {
-  //     id: 5,
-  //     name: "Vivo X100 Pro",
-  //     category: "Smartphones",
-  //     stock: 8,
-  //     price: 899,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "Low Stock",
-  //     features: ["50MP Camera", "Zeiss Optics", "Dimensity 9300", "5G"],
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "Vivo V29",
-  //     category: "Smartphones",
-  //     stock: 12,
-  //     price: 499,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["50MP Camera", "Aura Light", "5G"],
-  //   },
-  //   {
-  //     id: 7,
-  //     name: "Vivo Y36",
-  //     category: "Smartphones",
-  //     stock: 25,
-  //     price: 299,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["50MP Camera", "5000mAh Battery", "44W Charging"],
-  //   },
 
-  //   // iPhone Models
-  //   {
-  //     id: 8,
-  //     name: "iPhone 15 Pro Max",
-  //     category: "Smartphones",
-  //     stock: 15,
-  //     price: 1199,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["48MP Camera", "A17 Pro", "Titanium Frame", "5G"],
-  //   },
-  //   {
-  //     id: 9,
-  //     name: "iPhone 15",
-  //     category: "Smartphones",
-  //     stock: 20,
-  //     price: 799,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["48MP Camera", "A16 Bionic", "USB-C", "5G"],
-  //   },
 
-  //   // Google Phones
-  //   {
-  //     id: 10,
-  //     name: "Google Pixel 8 Pro",
-  //     category: "Smartphones",
-  //     stock: 12,
-  //     price: 999,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["50MP Camera", "Tensor G3", "AI Features", "5G"],
-  //   },
-  //   {
-  //     id: 11,
-  //     name: "Google Pixel 8",
-  //     category: "Smartphones",
-  //     stock: 18,
-  //     price: 699,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["50MP Camera", "Tensor G3", "5G"],
-  //   },
 
-  //   // OnePlus Phones
-  //   {
-  //     id: 12,
-  //     name: "OnePlus 12",
-  //     category: "Smartphones",
-  //     stock: 0,
-  //     price: 899,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "Out of Stock",
-  //     features: ["50MP Camera", "Snapdragon 8 Gen 3", "100W Charging", "5G"],
-  //   },
-  //   {
-  //     id: 13,
-  //     name: "OnePlus Nord CE 3",
-  //     category: "Smartphones",
-  //     stock: 22,
-  //     price: 399,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["64MP Camera", "5G", "Fast Charging"],
-  //   },
-
-  //   // Xiaomi Phones
-  //   {
-  //     id: 14,
-  //     name: "Xiaomi 14 Pro",
-  //     category: "Smartphones",
-  //     stock: 10,
-  //     price: 999,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "Low Stock",
-  //     features: [
-  //       "50MP Leica Camera",
-  //       "Snapdragon 8 Gen 3",
-  //       "120W Charging",
-  //       "5G",
-  //     ],
-  //   },
-  //   {
-  //     id: 15,
-  //     name: "Xiaomi Redmi Note 13 Pro",
-  //     category: "Smartphones",
-  //     stock: 28,
-  //     price: 349,
-  //     icon: <Smartphone className="w-6 h-6" />,
-  //     status: "In Stock",
-  //     features: ["200MP Camera", "67W Charging", "5G"],
-  //   },
-  // ];
-
- 
-
-  const [product, setProduct] = useState([]); // Initialize state to hold an array of products
-  const [productLS, setProductLS] = useState([]); 
-  const [productOS, setProductOS] = useState([]); 
-  const products =product
+  const [product, setProduct] = useState([]);
+  const [productLS, setProductLS] = useState([]);
+  const [productOS, setProductOS] = useState([]);
+  const products = product
 
   useEffect(() => {
     // Fetch product data
     const fetchData = async () => {
-      
+
       const apiUrl = import.meta.env.VITE_APP_BACKENDPRODUCT;
       const apiUrlLS = import.meta.env.VITE_APP_BACKENDPRODUCTLS;
       const apiUrlOS = import.meta.env.VITE_APP_BACKENDPRODUCTOS;
@@ -224,7 +57,7 @@ function ProductView() {
         const responseOS = await axios.get(apiUrlOS);
         setProductOS(responseOS.data.outOfStockVariantCount)
         // Log full response to check its structure
-        console.log(response.data);
+
 
         const backendData = response.data.getProduct; // Array of products
 
@@ -235,7 +68,7 @@ function ProductView() {
           return {
             id: product._id || index + 1, // Use the _id or fall back to index as id
             name: product.productName || 'N/A',
-            category: product.productCategory || 'N/A', 
+            category: product.productCategory || 'N/A',
             stock: productVariants.length > 0
               ? productVariants.reduce((acc, variant) => acc + (variant.stock || 0), 0)
               : product.productStock || 0, // Handle stock if variants are empty
@@ -250,8 +83,8 @@ function ProductView() {
 
         // Update the product state with the transformed data
         setProduct(transformedData);
-        console.log("Transformed Product data:", transformedData);
-        
+
+
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -261,7 +94,7 @@ function ProductView() {
     fetchData();
   }, []); // Empty dependency array ensures it only runs once when the component mounts
 
-  
+
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -347,11 +180,10 @@ function ProductView() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
                 <div
-                  className={`p-4 rounded-xl ${
-                    product.status === "In Stock"
+                  className={`p-4 rounded-xl ${product.status === "In Stock"
                       ? "bg-gradient-to-br from-blue-50 to-blue-100"
                       : "bg-gradient-to-br from-gray-50 to-gray-100"
-                  }`}
+                    }`}
                 >
                   {product.icon}
                 </div>
@@ -435,7 +267,7 @@ function ProductView() {
   );
 
   const ListView = () => (
-    
+
     <div className="space-y-4">
       {filteredProducts.map((product) => (
         <div
@@ -446,11 +278,10 @@ function ProductView() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div
-                  className={`p-4 rounded-xl ${
-                    product.status === "In Stock"
+                  className={`p-4 rounded-xl ${product.status === "In Stock"
                       ? "bg-gradient-to-br from-blue-50 to-blue-100"
                       : "bg-gradient-to-br from-gray-50 to-gray-100"
-                  }`}
+                    }`}
                 >
                   {product.icon}
                 </div>
@@ -533,9 +364,8 @@ function ProductView() {
               </button>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`p-2.5 rounded-xl transition-colors ${
-                  showFilters ? "bg-blue-500 text-white" : "hover:bg-white/50"
-                }`}
+                className={`p-2.5 rounded-xl transition-colors ${showFilters ? "bg-blue-500 text-white" : "hover:bg-white/50"
+                  }`}
                 title="Toggle filters"
               >
                 <Filter className="w-5 h-5" />
@@ -600,11 +430,10 @@ function ProductView() {
                           setSelectedCategory(category);
                           if (category === "all") setSelectedSubCategory("all");
                         }}
-                        className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                          selectedCategory === category
+                        className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${selectedCategory === category
                             ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
                             : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
-                        }`}
+                          }`}
                       >
                         {category.charAt(0).toUpperCase() + category.slice(1)}
                       </button>

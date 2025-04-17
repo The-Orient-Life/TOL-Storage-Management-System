@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, User } from 'lucide-react';
 import axios from 'axios';
 import Swal from "sweetalert2";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import Logo from "../assets/LOGO.jpg"
 import { jwtDecode } from "jwt-decode";
 
@@ -11,7 +11,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent form from submitting the default way
@@ -19,8 +19,8 @@ function Login() {
     // Get the backend URL from the environment variable
     const regURL = import.meta.env.VITE_APP_BACKENDLOG;
 
-    // Check if the URL is correct
-    console.log("Backend URL:", regURL);  // Log the backend URL to verify it's correct
+
+    // Log the backend URL to verify it's correct
 
     if (!regURL) {
       console.error("Backend URL is missing! Please check your .env file.");
@@ -37,8 +37,8 @@ function Login() {
       if (response.data.status === "ok") {
         const token = response.data.token;
         sessionStorage.setItem("authToken", token);
-        
-        
+
+
         const storedUserDetails = sessionStorage.getItem('UserDetails');
         let userRole = '';
 
@@ -46,19 +46,19 @@ function Login() {
           const parsedUserDetails = JSON.parse(storedUserDetails);
           if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.role) {
             userRole = parsedUserDetails.data.role;
-            console.log("User Role: ", userRole);
-            if(userRole === "Head Admin"){
+
+            if (userRole === "Head Admin") {
               navigate("/dashboard");
               //window.location.reload();
               Swal.fire("Success", "You have logged in successfully", "success");
-            }else{
+            } else {
               navigate("/productview");
-             // window.location.reload();
+              // window.location.reload();
               Swal.fire("Success", "You have logged in successfully", "success");
             }
           }
         }
-        
+
       } else {
         Swal.fire("Error", response.data.error, "error");
       }
@@ -77,14 +77,13 @@ function Login() {
     );
 
     if (userDetailsResponse.data) {
-      console.log('User details:', userDetailsResponse.data);
+
       // Handle user details response (e.g., show user info or store it)
       sessionStorage.setItem("UserDetails", JSON.stringify(userDetailsResponse));
     } else {
       Swal.fire("Error", "Failed to fetch user details", "error");
     }
 
-    console.log(decoded);
 
   };
 
@@ -99,13 +98,13 @@ function Login() {
     );
 
     if (userDetailsResponse.data) {
-      console.log('User details:', userDetailsResponse.data);
+
       // Handle user details response (e.g., show user info or store it)
     } else {
       Swal.fire("Error", "Failed to fetch user details", "error");
     }
 
-    console.log(decoded);
+
   }
 
   return (

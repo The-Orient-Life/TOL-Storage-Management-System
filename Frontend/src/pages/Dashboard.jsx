@@ -4,38 +4,9 @@ import { CheckCircleIcon, XCircleIcon, ArrowUpIcon, ArrowDownIcon, CurrencyDolla
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-const data = [
-  { name: 'Jan', easyPayment: 4000, cashPayment: 2400 },
-  { name: 'Feb', easyPayment: 3000, cashPayment: 1398 },
-  { name: 'Mar', easyPayment: 2000, cashPayment: 9800 },
-  { name: 'Apr', easyPayment: 2780, cashPayment: 3908 },
-  { name: 'May', easyPayment: 1890, cashPayment: 4800 },
-  { name: 'Jun', easyPayment: 2390, cashPayment: 3800 },
-];
 
-const pendingPayments = [
-  {
-    id: 1,
-    customer: "John Doe",
-    amount: "$2,500",
-    date: "2023-12-20",
-    status: "pending"
-  },
-  {
-    id: 2,
-    customer: "Jane Smith",
-    amount: "$1,800",
-    date: "2023-12-19",
-    status: "pending"
-  },
-  {
-    id: 3,
-    customer: "Mike Johnson",
-    amount: "$3,200",
-    date: "2023-12-18",
-    status: "pending"
-  }
-];
+
+
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -123,7 +94,7 @@ export default function Dashboard() {
             </button> */}
           </div>
         </div>
-        
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
@@ -140,7 +111,7 @@ export default function Dashboard() {
             <p className="text-3xl font-bold text-gray-900 mb-2">${countE}</p>
             <p className="text-sm text-gray-500">Compared to last month</p>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-blue-100 rounded-lg">
@@ -155,9 +126,9 @@ export default function Dashboard() {
             <p className="text-3xl font-bold text-gray-900 mb-2">${countC}</p>
             <p className="text-sm text-gray-500">Compared to last month</p>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
-              onClick={handleClick}
+            onClick={handleClick}
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-yellow-100 rounded-lg">
@@ -185,37 +156,37 @@ export default function Dashboard() {
 
                   <defs>
                     <linearGradient id="easyPaymentGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="cashPaymentGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis dataKey="name" stroke="#6B7280" />
                   <YAxis stroke="#6B7280" />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area 
-                    type="monotone" 
-                    dataKey="easyPayment" 
-                    stroke="#10B981" 
+                  <Area
+                    type="monotone"
+                    dataKey="easyPayment"
+                    stroke="#10B981"
                     fillOpacity={1}
-                    fill="url(#easyPaymentGradient)" 
+                    fill="url(#easyPaymentGradient)"
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="fullPayment" 
-                    stroke="#3B82F6" 
+                  <Area
+                    type="monotone"
+                    dataKey="fullPayment"
+                    stroke="#3B82F6"
                     fillOpacity={1}
-                    fill="url(#cashPaymentGradient)" 
+                    fill="url(#cashPaymentGradient)"
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-700 mb-6">Payment Distribution</h3>
             <div className="h-80">
@@ -226,14 +197,14 @@ export default function Dashboard() {
                   <XAxis dataKey="name" stroke="#6B7280" />
                   <YAxis stroke="#6B7280" />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar 
-                    dataKey="easyPayment" 
-                    fill="#10B981" 
+                  <Bar
+                    dataKey="easyPayment"
+                    fill="#10B981"
                     radius={[4, 4, 0, 0]}
                   />
-                  <Bar 
-                    dataKey="fullPayment" 
-                    fill="#3B82F6" 
+                  <Bar
+                    dataKey="fullPayment"
+                    fill="#3B82F6"
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>

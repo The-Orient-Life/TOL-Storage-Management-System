@@ -30,7 +30,6 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
 
   const OnAddBtnClick = () => {
 
-    console.log("Add Button Clicked")
     navigate('/productadd')
 
   }
@@ -42,14 +41,13 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
     const parsedUserDetails = JSON.parse(storedUserDetails);
     if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.role) {
       userRole = parsedUserDetails.data.role;
-      console.log("User Role: ", userRole);
     }
   }
 
   const menuItems = [
     // { name: "Dashboard", icon: <FaHome />, link: "/dashboard" },
 
-    ...(userRole === "Head Admin" 
+    ...(userRole === "Head Admin"
       ? [{ name: "Dashboard", icon: <FaHome />, link: "/dashboard" }]
       : []),
     // { name: "Profile", icon: <FaUser />, link: "/profile" },
@@ -67,10 +65,10 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       dropdown: [
         { name: "View Product", link: "/productview" },
         // { name: "Returns", link: "/productreturn" },
-        ...(userRole === "Head Admin" 
+        ...(userRole === "Head Admin"
           ? [{ name: "Restock", link: "/restock" }]
           : []),
-          { name: "Payment Update", link: "/repayment" },
+        { name: "Payment Update", link: "/repayment" },
       ],
     },
     {
@@ -98,8 +96,8 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
     //     { name: "Monthly Sales", link: "/settings/privacy" },
     //   ],
     // },
-    ...(userRole === "Head Admin" 
-      ? [{ name: "Reports", icon:  <HiOutlineSquare3Stack3D />, link: "/report" }]
+    ...(userRole === "Head Admin"
+      ? [{ name: "Reports", icon: <HiOutlineSquare3Stack3D />, link: "/report" }]
       : [])
   ];
 

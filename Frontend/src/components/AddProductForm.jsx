@@ -38,7 +38,7 @@ function AddProduct() {
       const stock = parseInt(variant.stock) || 0
       return total + stock
     }, 0)
-    
+
     if (totalStock === 0) {
       setStockStatus("out-of-stock")
     } else if (totalStock < 10) {
@@ -73,62 +73,24 @@ function AddProduct() {
     setVariants(newVariants)
   }
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault()
-    
-  //   if (!productName || !category) {
-  //     setFormError("Please fill in all required fields")
-  //     return
-  //   }
 
-  //   if (variants.some(v => !v.name || !v.price)) {
-  //     setFormError("Please fill in all variant details")
-  //     return
-  //   }
-
-  //   // Form is valid
-  //   setFormError("")
-
-  //   // Format the data for logging
-  //   const formData = {
-  //     productName,
-  //     category,
-  //     variants: variants.map(variant => ({
-  //       name: variant.name,
-  //       price: parseFloat(variant.price) || 0,
-  //       stock: parseInt(variant.stock) || 0
-  //     })),
-  //     totalWorth,
-  //     stockStatus,
-  //     image: imagePreview ? 'Image uploaded' : 'No image'
-  //   }
-
-  //   // Log the formatted data
-  //   console.log('Product Added:', formData)
-
-  //   // Clear form after successful submission
-  //   setProductName("")
-  //   setCategory("")
-  //   setVariants([{ name: "", stock: "", price: "" }])
-  //   setImagePreview("")
-  // }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!productName || !category) {
       setFormError("Please fill in all required fields");
       return;
     }
-  
+
     if (variants.some(v => !v.name || !v.price)) {
       setFormError("Please fill in all variant details");
       return;
     }
-  
+
     // Form is valid
     setFormError("");
-  
+
     // Format the data for the API
     const formData = {
       productName,
@@ -142,7 +104,7 @@ function AddProduct() {
       productStockStatus: stockStatus,
       imagePreview: imagePreview // This will be the image URL
     };
-  
+
     try {
       // Make the API request to add the product
       const regURL = import.meta.env.VITE_APP_BACKENDADD;
@@ -155,7 +117,7 @@ function AddProduct() {
           title: "Product Added Successfully",
           text: response.data.message
         });
-  
+
         // Reset form fields after successful submission
         setProductName("");
         setCategory("");
@@ -320,11 +282,10 @@ function AddProduct() {
             </div>
             <div>
               <label className="block mb-1 font-medium">Stock Status</label>
-              <div className={`px-3 py-2 rounded-lg font-medium ${
-                stockStatus === 'in-stock' ? 'bg-green-100 text-green-700' :
-                stockStatus === 'low-stock' ? 'bg-yellow-100 text-yellow-700' :
-                'bg-red-100 text-red-700'
-              }`}>
+              <div className={`px-3 py-2 rounded-lg font-medium ${stockStatus === 'in-stock' ? 'bg-green-100 text-green-700' :
+                  stockStatus === 'low-stock' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                }`}>
                 {stockStatus.replace('-', ' ')}
               </div>
             </div>

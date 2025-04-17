@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 function UserRegister() {
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
   const [previewImage, setPreviewImage] = useState();
-  
+
   const isGuarantor = watch('isGuarantor');
   const guarantors = watch('guarantors') || [];
   const selectedRole = watch('role');
@@ -21,26 +21,25 @@ function UserRegister() {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
+
     // Handle form submission
     const regURL = import.meta.env.VITE_APP_BACKENDREG;
 
     axios.post(regURL, data)
-    .then(response => {
-      console.log("YayyyREG"); 
-      console.log(response.data);
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Registration Successfully",
-        showConfirmButton: false,
-        iconColor: "#4BB543",
-        timer: 2000,
-      }); 
-    })
-    .catch(error => {
-      console.error("This Is Post Error Form Frontend", error);  
-    });
+      .then(response => {
+
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Registration Successfully",
+          showConfirmButton: false,
+          iconColor: "#4BB543",
+          timer: 2000,
+        });
+      })
+      .catch(error => {
+        console.error("This Is Post Error Form Frontend", error);
+      });
   };
 
   const handleAddGuarantor = () => {
@@ -107,7 +106,7 @@ function UserRegister() {
                 <label className="text-sm font-medium text-gray-700">Email</label>
                 <input
                   type="email"
-                  {...register('email', { 
+                  {...register('email', {
                     required: 'Email is required',
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -172,7 +171,7 @@ function UserRegister() {
                   <label className="text-sm font-medium text-gray-700">Password</label>
                   <input
                     type="password"
-                    {...register('password', { 
+                    {...register('password', {
                       required: 'Password is required for Executive and Branch Manager roles',
                       minLength: {
                         value: 8,
@@ -245,7 +244,7 @@ function UserRegister() {
                   </button>
                 )}
               </div>
-              
+
               {guarantors.map((_, index) => (
                 <div key={index} className="relative">
                   <button
@@ -259,7 +258,7 @@ function UserRegister() {
                     index={index}
                     register={register}
                     errors={errors}
-                    onLocationSelect={(location) => 
+                    onLocationSelect={(location) =>
                       setValue(`guarantors.${index}.location`, location)
                     }
                   />
