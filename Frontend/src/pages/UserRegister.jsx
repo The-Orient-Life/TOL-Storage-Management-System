@@ -7,7 +7,29 @@ import axios from 'axios';
 import Swal from "sweetalert2";
 
 function UserRegister() {
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
+
+
+  const storedUserDetails = sessionStorage.getItem('UserDetails');
+  let userRole = '';
+  let defaultRole = 'Customer';
+
+  if (storedUserDetails) {
+    const parsedUserDetails = JSON.parse(storedUserDetails);
+    if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.role) {
+      userRole = parsedUserDetails.data.role;
+
+      // Only Head Admin can assign roles manually
+      if (userRole === 'Head Admin') {
+        defaultRole = '';
+      }
+    }
+  }
+
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+    defaultValues: {
+      role: defaultRole  // Automatically sets "Customer" if not Head Admin
+    }
+  });
   const [previewImage, setPreviewImage] = useState();
 
   const isGuarantor = watch('isGuarantor');
@@ -54,6 +76,7 @@ function UserRegister() {
   };
 
   const showPasswordField = selectedRole === 'Executive' || selectedRole === 'Branch Manager';
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -153,7 +176,7 @@ function UserRegister() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Role</label>
                 <select
                   {...register('role', { required: 'Role is required' })}
@@ -164,7 +187,29 @@ function UserRegister() {
                   <option value="Branch Manager">Branch Manager</option>
                 </select>
                 {errors.role && <span className="text-red-500 text-xs">{errors.role.message}</span>}
-              </div>
+              </div> */}
+
+              {userRole === 'Head Admin' ? (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Role</label>
+                  <select
+                    {...register('role', { required: 'Role is required' })}
+                    defaultValue=""
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                  >
+                    <option value="">Select a role</option>
+                    <option value="Executive">Executive</option>
+                    <option value="Branch Manager">Branch Manager</option>
+                  </select>
+                  {errors.role && (
+                    <span className="text-red-500 text-xs">{errors.role.message}</span>
+                  )}
+                </div>
+              ) : (
+                // Hidden input so role is still submitted as "Customer"
+                <input type="hidden" value="Customer" {...register('role')} />
+              )}
+
 
               {showPasswordField && (
                 <div className="space-y-2">
