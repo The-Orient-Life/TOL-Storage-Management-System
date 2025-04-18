@@ -168,13 +168,12 @@ const Returns = () => {
                   <td className="px-6 py-4 whitespace-nowrap">{return_.reason}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        return_.status === 'Approved'
+                      className={`px-2 py-1 rounded-full text-xs ${return_.status === 'Approved'
                           ? 'bg-green-100 text-green-800'
                           : return_.status === 'Rejected'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}
                     >
                       {return_.status}
                     </span>
@@ -215,13 +214,12 @@ const Returns = () => {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-500">Status:</span>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      return_.status === 'Approved'
+                    className={`px-2 py-1 rounded-full text-xs ${return_.status === 'Approved'
                         ? 'bg-green-100 text-green-800'
                         : return_.status === 'Rejected'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}
                   >
                     {return_.status}
                   </span>

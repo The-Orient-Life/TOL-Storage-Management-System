@@ -4,7 +4,7 @@ import CustomerSearch from '../components/CustomerSearch'
 function Customer() {
   return (
     <div>
-     <CustomerSearch/>
+      <CustomerSearch />
     </div>
   )
 }

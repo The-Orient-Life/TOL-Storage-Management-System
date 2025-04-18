@@ -165,11 +165,10 @@ const CustomerList = () => {
                 <div key={index} className="p-4 bg-gray-50 rounded-lg">
                   <div className="flex justify-between items-start mb-2">
                     <h5 className="font-medium">{return_.product}</h5>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      return_.status === 'Approved' 
+                    <span className={`px-2 py-1 rounded-full text-xs ${return_.status === 'Approved'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-yellow-100 text-yellow-800'
-                    }`}>
+                      }`}>
                       {return_.status}
                     </span>
                   </div>
@@ -205,11 +204,10 @@ const CustomerList = () => {
                       <p className="font-medium text-red-600">${penalty.amount}</p>
                       <p className="text-sm text-gray-600">{penalty.date}</p>
                     </div>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      penalty.status === 'Paid'
+                    <span className={`px-2 py-1 rounded-full text-xs ${penalty.status === 'Paid'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
-                    }`}>
+                      }`}>
                       {penalty.status}
                     </span>
                   </div>
@@ -261,7 +259,7 @@ const CustomerList = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {customers.map((customer) => (
-                  <tr 
+                  <tr
                     key={customer.id}
                     className={`hover:bg-gray-50 cursor-pointer ${selectedCustomer === customer.id ? 'bg-blue-50' : ''}`}
                     onClick={() => setSelectedCustomer(customer.id)}
@@ -274,16 +272,14 @@ const CustomerList = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        customer.penalties?.length ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span className={`px-2 py-1 rounded-full text-xs ${customer.penalties?.length ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
                         {customer.penalties?.length || 0}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        customer.penalties?.length ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
-                      }`}>
+                      <span className={`px-2 py-1 rounded-full text-xs ${customer.penalties?.length ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                        }`}>
                         {customer.penalties?.length ? 'Has Penalties' : 'Good Standing'}
                       </span>
                     </td>
@@ -313,31 +309,28 @@ const CustomerList = () => {
 
                 <div className="flex border-b border-gray-200 mb-4">
                   <button
-                    className={`flex-1 py-2 text-sm font-medium ${
-                      activeTab === 'info'
+                    className={`flex-1 py-2 text-sm font-medium ${activeTab === 'info'
                         ? 'text-blue-600 border-b-2 border-blue-600'
                         : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                      }`}
                     onClick={() => setActiveTab('info')}
                   >
                     Information
                   </button>
                   <button
-                    className={`flex-1 py-2 text-sm font-medium ${
-                      activeTab === 'returns'
+                    className={`flex-1 py-2 text-sm font-medium ${activeTab === 'returns'
                         ? 'text-blue-600 border-b-2 border-blue-600'
                         : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                      }`}
                     onClick={() => setActiveTab('returns')}
                   >
                     Returns
                   </button>
                   <button
-                    className={`flex-1 py-2 text-sm font-medium ${
-                      activeTab === 'penalties'
+                    className={`flex-1 py-2 text-sm font-medium ${activeTab === 'penalties'
                         ? 'text-blue-600 border-b-2 border-blue-600'
                         : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                      }`}
                     onClick={() => setActiveTab('penalties')}
                   >
                     Penalties

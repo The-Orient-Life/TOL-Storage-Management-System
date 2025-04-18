@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import {
   FaHome,
@@ -16,7 +16,7 @@ import { HiOutlineSquare3Stack3D } from "react-icons/hi2";
 import { MdOutlineSettings } from "react-icons/md";
 import { LuMessageSquare } from "react-icons/lu";
 import { MdOutlineNotificationsNone } from "react-icons/md";
-
+import { useNavigate } from 'react-router-dom';
 
 
 function Navbar({ isSidebarOpen, setSidebarOpen }) {
@@ -26,8 +26,30 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
     setOpenDropdown(openDropdown === index ? null : index);
   };
 
+  const navigate = useNavigate();
+
+  const OnAddBtnClick = () => {
+
+    navigate('/productadd')
+
+  }
+
+  const storedUserDetails = sessionStorage.getItem('UserDetails');
+  let userRole = '';
+
+  if (storedUserDetails) {
+    const parsedUserDetails = JSON.parse(storedUserDetails);
+    if (parsedUserDetails && parsedUserDetails.data && parsedUserDetails.data.role) {
+      userRole = parsedUserDetails.data.role;
+    }
+  }
+
   const menuItems = [
-    { name: "Dashboard", icon: <FaHome />, link: "/" },
+    // { name: "Dashboard", icon: <FaHome />, link: "/dashboard" },
+
+    ...(userRole === "Head Admin"
+      ? [{ name: "Dashboard", icon: <FaHome />, link: "/dashboard" }]
+      : []),
     // { name: "Profile", icon: <FaUser />, link: "/profile" },
     // {
     //   name: "Datastore",
@@ -42,15 +64,20 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
       icon: <BiCube />,
       dropdown: [
         { name: "View Product", link: "/productview" },
-        { name: "Returns", link: "/productreturn" },
+        // { name: "Returns", link: "/productreturn" },
+        ...(userRole === "Head Admin"
+          ? [{ name: "Restock", link: "/restock" }]
+          : []),
+        { name: "Payment Update", link: "/repayment" },
       ],
     },
     {
       name: "Customer",
       icon: <FaUser />,
       dropdown: [
-        { name: "View Customer", link: "/customer" },
-        // { name: "Privacy", link: "/settings/privacy" },
+        { name: "Search Customer", link: "/customer" },
+        { name: "New User", link: "/adduser" },
+        // { name: "Customer List", link: "/customerlist" }
       ],
     },
     {
@@ -61,31 +88,19 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
         { name: "Purchase History", link: "/purchasehistory" },
       ],
     },
-    {
-      name: "Spicial",
-      icon: <FaSurprise />,
-      dropdown: [
-        { name: "Customer List V2 Head Admin", link: "/customerlist" },
-       // { name: "Privacy", link: "/settings/privacy" },
-      ],
-    },
-    {
-      name: "Reports",
-      icon: <HiOutlineSquare3Stack3D />,
-      dropdown: [
-        { name: "Demo One", link: "/settings/account" },
-        { name: "Demo Two", link: "/settings/privacy" },
-      ],
-    },
-    {
-      name: "Setting",
-      icon: <MdOutlineSettings />,
-      // dropdown: [
-      //   { name: "Account", link: "/settings/account" },
-      //   { name: "Privacy", link: "/settings/privacy" },
-      // ],
-    },
+    // {
+    //   name: "Reports",
+    //   icon: <HiOutlineSquare3Stack3D />,
+    //   dropdown: [
+    //     { name: "Weekly Sales", link: "/settings/account" },
+    //     { name: "Monthly Sales", link: "/settings/privacy" },
+    //   ],
+    // },
+    ...(userRole === "Head Admin"
+      ? [{ name: "Reports", icon: <HiOutlineSquare3Stack3D />, link: "/report" }]
+      : [])
   ];
+
 
   return (
     <div>
@@ -123,7 +138,7 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
             <button
               type="button"
               className="flex items-center gap-2 bg-blue-500 text-white font-medium rounded-full px-5 py-2 shadow-lg hover:bg-blue-600 transition"
-            >
+              onClick={OnAddBtnClick}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -140,39 +155,14 @@ function Navbar({ isSidebarOpen, setSidebarOpen }) {
               </svg>
               Add Product
             </button>
-            <div className="flex items-center space-x-4">
-              <button
-                type="button"
-                className="focus:outline-none rounded-full shadow-lg"
-              >
-                <img
-                  className="w-10 h-10 rounded-full border-2 border-gray-300"
-                  src="https://randomuser.me/api/portraits/women/44.jpg"
-                  alt="User Profile"
-                />
-              </button>
-              <button
-                type="button"
-                className="focus:outline-none bg-indigo-50 rounded-full p-2 shadow-lg"
-              >
-                <MdOutlineNotificationsNone className="w-6 h-6" />
-              </button>
-              <button
-                type="button"
-                className="focus:outline-none bg-indigo-50 rounded-full p-2 shadow-lg"
-              >
-                <LuMessageSquare className="w-5 h-6" />
-              </button>
-            </div>
           </div>
         </div>
       </nav>
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } bg-white border-r border-gray-200 dark:bg-white shadow-2xl `}
+        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } bg-white border-r border-gray-200 dark:bg-white shadow-2xl `}
         aria-label="Sidebar"
       >
         <div className="h-full px-3 pb-4 overflow-y-auto">
