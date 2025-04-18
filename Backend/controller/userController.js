@@ -45,7 +45,7 @@ router.post('/register', async (req, res) => {
     let hashedPassword = null;
 
     // If role is Executive or Manager, validate and hash password
-    if (role === 'Executive' || role === 'Manager') {
+    if (role === 'Executive' || role === 'Manager' || role === 'Head Admin') {
       if (!password) {
         return res.status(400).json({ message: 'Password is required for Executive or Manager roles' });
       }
