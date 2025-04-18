@@ -26,19 +26,13 @@ router.post('/register', async (req, res) => {
   } = req.body;
 
   try {
-
-
     // Check if email or username already exists
     const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
     if (existingUser) {
       return res.json({ status: "error", error: "Email or username already registered" });
     }
 
-    // Check if the role is Executive or Manager, and if password is provided
-    if ((role === 'Executive' || role === 'Manager') && !password) {
-      return res.status(400).json({ message: 'Password is required for Executive or Manager roles' });
-    }
-
+    // Basic email validation
     if (!email || typeof email !== "string") {
       return res.json({ status: "error", error: "Email empty or invalid" });
     }
@@ -48,19 +42,27 @@ router.post('/register', async (req, res) => {
       return res.json({ status: "error", error: "Invalid email format" });
     }
 
-    // Password validation using regex
-    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
-    if (!passwordRegex.test(password)) {
-      return res.json({
-        status: "error",
-        error: "Invalid password format"
-      });
+    let hashedPassword = null;
+
+    // If role is Executive or Manager, validate and hash password
+    if (role === 'Executive' || role === 'Manager') {
+      if (!password) {
+        return res.status(400).json({ message: 'Password is required for Executive or Manager roles' });
+      }
+
+      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+      if (!passwordRegex.test(password)) {
+        return res.json({
+          status: "error",
+          error: "Invalid password format"
+        });
+      }
+
+      hashedPassword = await bcrypt.hash(password, 12);
     }
 
-    const hashPassword = await bcrypt.hash(password, 12)
-
-    // Create a new User document
-    const newUser = await new User({
+    // Create the new user
+    const newUser = new User({
       userName,
       nicNumber,
       email,
@@ -68,22 +70,21 @@ router.post('/register', async (req, res) => {
       phoneNumber2,
       address,
       branch,
-      guarantors: guarantors || [], // Optional field: If no guarantors, set to an empty array
-      photo: photo || [],           // Optional field: If no photos, set to an empty array
+      guarantors: guarantors || [],
+      photo: photo || [],
       role,
-      password: hashPassword
+      password: hashedPassword // null if Customer
     });
 
     await newUser.save();
 
-    // Respond with the saved user data (excluding sensitive data like password if you add one)
     res.status(201).json({ message: 'User registered successfully', user: newUser });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error, could not register user', error: err.message });
   }
 });
+
 
 router.get("/getuser", async (req, res) => {
   try {
